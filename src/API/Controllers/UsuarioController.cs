@@ -1,4 +1,5 @@
 using API.Attributes;
+using Microsoft.AspNetCore.Authorization;
 using Application.Constants;
 using Application.DTOs;
 using Application.UseCases.Usuarios.Commands;
@@ -16,6 +17,7 @@ namespace API.Controllers;
 /// </remarks>
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class UsuarioController : ControllerBase
 {
     private readonly IMediator _mediator;

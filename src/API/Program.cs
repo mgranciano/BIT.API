@@ -1,5 +1,7 @@
 namespace API;
 using API.Attributes;
+using Application.Constants;
+using Application.DTOs;
 using Application.Services;
 using Dominio.Interfaces;
 using Infrastructure.Persistence;
@@ -15,6 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text;
+using System.Text.Json;
 
 /// <summary>
 /// Configuración inicial del servidor y los servicios.
@@ -87,6 +90,20 @@ public static class Program
                     ValidIssuer = jwtSettings["Issuer"],
                     ValidAudience = jwtSettings["Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKeyString))
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnChallenge = async context =>
+                    {
+                        context.HandleResponse(); // 🔹 Evitar la respuesta predeterminada
+
+                        var jsonResponse = JsonSerializer.Serialize(ResponseDto<object>.Error(ApiMensajesGenerales.NoAutorizado));
+
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        context.Response.ContentType = "application/json";
+                        await context.Response.WriteAsync(jsonResponse);
+                    }
                 };
             });
 

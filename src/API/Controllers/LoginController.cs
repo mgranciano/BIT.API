@@ -3,6 +3,7 @@ namespace API.Controllers;
 using Application.DTOs;
 using Application.UseCases.Usuarios.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
@@ -30,6 +31,7 @@ public class LoginController : ControllerBase
     /// </summary>
     /// <param name="loginDto">Datos de inicio de sesión.</param>
     [HttpPost("authenticate")]
+    [AllowAnonymous]
     public async Task<IActionResult> Authenticate([FromBody] LoginDto loginDto)
     {
         _logger.LogInformation("📢 Intento de inicio de sesión para {Email}", loginDto.Email);
