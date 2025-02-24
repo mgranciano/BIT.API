@@ -1,0 +1,53 @@
+# 🔹 Omite archivos binarios y de compilación
+bin/
+obj/
+
+# 🔹 Omite todas las carpetas `logs` en cualquier subdirectorio
+logs/
+**/logs/
+
+# 🔹 Omite archivos de configuración local de usuario
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# 🔹 Omite archivos de compilación y caché de .NET
+*.dll
+*.exe
+*.pdb
+*.cache
+*.log
+*.vs/
+*.vscode/
+**/bin/
+**/obj/
+
+# 🔹 Omite archivos generados por NuGet y paquetes de dependencias
+*.nupkg
+packages/
+.nuget/
+project.lock.json
+project.assets.json
+
+# 🔹 Omite archivos de configuración específicos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# 🔹 Omite archivos temporales y de depuración
+*.bak
+*.swp
+*.swo
+
+# 🔹 Omite archivos de salida de SonarQube
+.sonar/
+
+# 🔹 Omite archivos de logs generados por la API
+logs/
+**/logs/
+*.log
+
+# 🔹 Omite archivos de configuración de Application Insights si los hay
+ApplicationInsights.config
