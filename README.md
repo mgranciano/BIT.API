@@ -106,7 +106,7 @@ Para analizar el código con **SonarLint** en VS Code:
 
 ---
 
-## 📌 5️⃣ **Estructura del Proyecto**
+## 📌 5️⃣ **Estructura del Proyecto (me falta colocar las ultimas carpetas)**
 ```
 bit-api/
 │-- src/
