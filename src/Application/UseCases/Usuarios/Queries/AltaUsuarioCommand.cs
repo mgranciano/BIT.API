@@ -9,21 +9,21 @@ namespace Application.UseCases.Usuarios.Commands;
 /// Representa un comando para dar de alta un nuevo usuario en el sistema.
 /// </summary>
 /// <remarks>
-/// Este comando utiliza `UsuarioDTO` para recibir los datos del usuario y 
+/// Este comando utiliza `UsuarioDto` para recibir los datos del usuario y 
 /// delegar la creación de la entidad `Usuario` al manejador.
 /// </remarks>
-public class AltaUsuarioCommand : IRequest<UsuarioDTO>
+public class AltaUsuarioCommand : IRequest<UsuarioDto>
 {
     /// <summary>
     /// Objeto que contiene la información del usuario a registrar.
     /// </summary>
-    public UsuarioDTO Usuario { get; set; }
+    public UsuarioDto Usuario { get; set; }
 
     /// <summary>
     /// Constructor del comando de alta de usuario.
     /// </summary>
     /// <param name="usuario">Objeto que contiene los datos del usuario a registrar.</param>
-    public AltaUsuarioCommand(UsuarioDTO usuario)
+    public AltaUsuarioCommand(UsuarioDto usuario)
     {
         Usuario = usuario;
     }
@@ -33,10 +33,10 @@ public class AltaUsuarioCommand : IRequest<UsuarioDTO>
 /// Manejador del comando `AltaUsuarioCommand`.
 /// </summary>
 /// <remarks>
-/// Este manejador convierte `UsuarioDTO` en una entidad `Usuario`, 
-/// lo guarda en el repositorio y devuelve `UsuarioDTO`.
+/// Este manejador convierte `UsuarioDto` en una entidad `Usuario`, 
+/// lo guarda en el repositorio y devuelve `UsuarioDto`.
 /// </remarks>
-public class AltaUsuarioHandler : IRequestHandler<AltaUsuarioCommand, UsuarioDTO>
+public class AltaUsuarioHandler : IRequestHandler<AltaUsuarioCommand, UsuarioDto>
 {
     private readonly IUsuarioWriter _usuarioWriter;
 
@@ -54,8 +54,8 @@ public class AltaUsuarioHandler : IRequestHandler<AltaUsuarioCommand, UsuarioDTO
     /// </summary>
     /// <param name="request">Solicitud de comando que contiene los datos del usuario.</param>
     /// <param name="cancellationToken">Token de cancelación de la operación.</param>
-    /// <returns>El usuario registrado en formato `UsuarioDTO`.</returns>
-    public async Task<UsuarioDTO> Handle(AltaUsuarioCommand request, CancellationToken cancellationToken)
+    /// <returns>El usuario registrado en formato `UsuarioDto`.</returns>
+    public async Task<UsuarioDto> Handle(AltaUsuarioCommand request, CancellationToken cancellationToken)
     {
         var usuario = new Usuario
         {
@@ -82,7 +82,7 @@ public class AltaUsuarioHandler : IRequestHandler<AltaUsuarioCommand, UsuarioDTO
 
         var usuarioCreado = await _usuarioWriter.RegistrarUsuarioAsync(usuario);
 
-        return new UsuarioDTO
+        return new UsuarioDto
         {
             UsuarioId = usuarioCreado.UsuarioId,
             Email = usuarioCreado.Email,
@@ -90,12 +90,12 @@ public class AltaUsuarioHandler : IRequestHandler<AltaUsuarioCommand, UsuarioDTO
             UsuarioSuperiorId = usuarioCreado.UsuarioSuperiorId,
             NombreSuperior = usuarioCreado.NombreSuperior,
             EmailSuperior = usuarioCreado.EmailSuperior,
-            Paises = usuarioCreado.Paises.Select(p => new PaisDTO
+            Paises = usuarioCreado.Paises.Select(p => new PaisDto
             {
                 PaisId = p.PaisId,
                 Estado = p.Estado
             }).ToList(),
-            Roles = usuarioCreado.Roles.Select(r => new RolDTO
+            Roles = usuarioCreado.Roles.Select(r => new RolDto
             {
                 RolId = r.RolId,
                 Estado = r.Estado

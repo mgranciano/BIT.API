@@ -43,7 +43,7 @@ public class ProducesUsuarioResponseFilter : IOperationFilter
             {
                 ["application/json"] = new OpenApiMediaType
                 {
-                    Schema = context.SchemaGenerator.GenerateSchema(typeof(ResponseDTO<object>), context.SchemaRepository)
+                    Schema = context.SchemaGenerator.GenerateSchema(typeof(ResponseDto<object>), context.SchemaRepository)
                 }
             }
         };
@@ -55,7 +55,7 @@ public class ProducesUsuarioResponseFilter : IOperationFilter
             {
                 ["application/json"] = new OpenApiMediaType
                 {
-                    Schema = context.SchemaGenerator.GenerateSchema(typeof(ResponseDTO<object>), context.SchemaRepository)
+                    Schema = context.SchemaGenerator.GenerateSchema(typeof(ResponseDto<object>), context.SchemaRepository)
                 }
             }
         };

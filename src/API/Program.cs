@@ -4,15 +4,17 @@ using Application.Services;
 using Dominio.Interfaces;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using System;
+using System.Text;
 
 /// <summary>
 /// Configuración inicial del servidor y los servicios.
@@ -64,6 +66,31 @@ public static class Program
         {
             Log.Information("✅ Envío de logs solo a Consola y Archivos.");
         }
+        
+        /// <summary>
+        /// Configuración de Autenticación con JWT
+        /// </summary>
+        var jwtSettings = configuration.GetSection("JwtSettings");
+        var secretKeyString = jwtSettings["SecretKey"] 
+                      ?? throw new InvalidOperationException("La clave secreta no puede ser nula en appsettings.json.");
+
+
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettings["Issuer"],
+                    ValidAudience = jwtSettings["Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKeyString))
+                };
+            });
+
+        builder.Services.AddAuthorization();
 
         builder.Services.Configure<MvcOptions>(options =>
         {
@@ -98,6 +125,32 @@ public static class Program
                     Email = "xxxx@xxxx.com"
                 }
             });
+            // ✅ Configuración de JWT en Swagger
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                Scheme = "Bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Description = "Ingrese el token JWT con el formato: Bearer {token}"
+            });
+
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    new string[] {}
+                }
+            });
+
             c.SupportNonNullableReferenceTypes();
             c.OperationFilter<ProducesUsuarioResponseFilter>();
         });
@@ -121,6 +174,7 @@ public static class Program
         }
 
         builder.Services.AddScoped<UsuarioService>();
+        builder.Services.AddScoped<JwtTokenService>();
 
         var app = builder.Build();
 
@@ -129,7 +183,9 @@ public static class Program
             app.UseHttpsRedirection();
         }
 
+        app.UseAuthentication();
         app.UseAuthorization();
+
         app.MapControllers();
 
         if (app.Environment.IsDevelopment())

@@ -7,7 +7,7 @@ namespace Application.DTOs;
 /// <remarks>
 /// Se usa para enviar y recibir datos de usuario en la API, sin exponer la entidad completa.
 /// </remarks>
-public class UsuarioDTO
+public class UsuarioDto
 {
     /// <summary>
     /// Identificador único del usuario.
@@ -42,12 +42,12 @@ public class UsuarioDTO
     /// <summary>
     /// Lista de países asignados al usuario.
     /// </summary>
-    public List<PaisDTO> Paises { get; set; }
+    public List<PaisDto> Paises { get; set; }
 
     /// <summary>
     /// Lista de roles asignados al usuario.
     /// </summary>
-    public List<RolDTO> Roles { get; set; }
+    public List<RolDto> Roles { get; set; }
 
     /// <summary>
     /// Fecha en la que el usuario fue creado en el sistema.
@@ -68,7 +68,7 @@ public class UsuarioDTO
 /// <summary>
 /// Representa un objeto de transferencia de datos (DTO) para `Pais`.
 /// </summary>
-public class PaisDTO
+public class PaisDto
 {
     public string PaisId { get; set; }
     public bool Estado { get; set; }
@@ -77,7 +77,7 @@ public class PaisDTO
 /// <summary>
 /// Representa un objeto de transferencia de datos (DTO) para `Rol`.
 /// </summary>
-public class RolDTO
+public class RolDto
 {
     public string RolId { get; set; }
     public bool Estado { get; set; }

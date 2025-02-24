@@ -1,5 +1,4 @@
 using Application.DTOs;
-using Dominio.Entities;
 using MediatR;
 using Dominio.Interfaces;
 
@@ -12,16 +11,16 @@ namespace Application.UseCases.Usuarios.Queries;
 /// Esta consulta se utiliza en MediatR para solicitar la lista de usuarios 
 /// desde el repositorio correspondiente.
 /// </remarks>
-public class ObtenerUsuariosQuery : IRequest<IEnumerable<UsuarioDTO>> { }
+public class ObtenerUsuariosQuery : IRequest<IEnumerable<UsuarioDto>> { }
 
 /// <summary>
 /// Manejador de la consulta `ObtenerUsuariosQuery`.
 /// </summary>
 /// <remarks>
 /// Este manejador utiliza el repositorio de usuarios para recuperar la lista completa de usuarios
-/// y los convierte en objetos `UsuarioDTO`.
+/// y los convierte en objetos `UsuarioDto`.
 /// </remarks>
-public class ObtenerUsuariosHandler : IRequestHandler<ObtenerUsuariosQuery, IEnumerable<UsuarioDTO>>
+public class ObtenerUsuariosHandler : IRequestHandler<ObtenerUsuariosQuery, IEnumerable<UsuarioDto>>
 {
     private readonly IUsuarioReader _usuarioReader;
 
@@ -39,12 +38,12 @@ public class ObtenerUsuariosHandler : IRequestHandler<ObtenerUsuariosQuery, IEnu
     /// </summary>
     /// <param name="request">Solicitud de consulta.</param>
     /// <param name="cancellationToken">Token de cancelación.</param>
-    /// <returns>Lista de usuarios disponibles en formato `UsuarioDTO`.</returns>
-    public async Task<IEnumerable<UsuarioDTO>> Handle(ObtenerUsuariosQuery request, CancellationToken cancellationToken)
+    /// <returns>Lista de usuarios disponibles en formato `UsuarioDto`.</returns>
+    public async Task<IEnumerable<UsuarioDto>> Handle(ObtenerUsuariosQuery request, CancellationToken cancellationToken)
     {
         var usuarios = await _usuarioReader.ObtenerUsuariosAsync();
         
-        return usuarios.Select(usuario => new UsuarioDTO
+        return usuarios.Select(usuario => new UsuarioDto
         {
             UsuarioId = usuario.UsuarioId,
             Email = usuario.Email,
@@ -52,12 +51,12 @@ public class ObtenerUsuariosHandler : IRequestHandler<ObtenerUsuariosQuery, IEnu
             UsuarioSuperiorId = usuario.UsuarioSuperiorId,
             NombreSuperior = usuario.NombreSuperior,
             EmailSuperior = usuario.EmailSuperior,
-            Paises = usuario.Paises.Select(p => new PaisDTO
+            Paises = usuario.Paises.Select(p => new PaisDto
             {
                 PaisId = p.PaisId,
                 Estado = p.Estado
             }).ToList(),
-            Roles = usuario.Roles.Select(r => new RolDTO
+            Roles = usuario.Roles.Select(r => new RolDto
             {
                 RolId = r.RolId,
                 Estado = r.Estado

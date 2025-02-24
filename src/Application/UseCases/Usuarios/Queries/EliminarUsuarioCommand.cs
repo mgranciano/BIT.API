@@ -12,7 +12,7 @@ namespace Application.UseCases.Usuarios.Commands;
 /// Este comando se utiliza en MediatR para solicitar la eliminación lógica de un usuario
 /// a través del servicio de escritura de usuarios (`IUsuarioWriter`).
 /// </remarks>
-public class EliminarUsuarioCommand : IRequest<UsuarioDTO>
+public class EliminarUsuarioCommand : IRequest<UsuarioDto>
 {
     /// <summary>
     /// Identificador único del usuario que se desea eliminar.
@@ -36,7 +36,7 @@ public class EliminarUsuarioCommand : IRequest<UsuarioDTO>
 /// Este manejador utiliza el repositorio de escritura de usuarios (`IUsuarioWriter`) 
 /// para procesar la solicitud y marcar el usuario como eliminado en el sistema.
 /// </remarks>
-public class EliminarUsuarioHandler : IRequestHandler<EliminarUsuarioCommand, UsuarioDTO>
+public class EliminarUsuarioHandler : IRequestHandler<EliminarUsuarioCommand, UsuarioDto>
 {
     private readonly IUsuarioWriter _usuarioWriter;
 
@@ -54,13 +54,13 @@ public class EliminarUsuarioHandler : IRequestHandler<EliminarUsuarioCommand, Us
     /// </summary>
     /// <param name="request">Solicitud de comando que contiene el identificador del usuario a eliminar.</param>
     /// <param name="cancellationToken">Token de cancelación de la operación.</param>
-    /// <returns>El usuario eliminado en formato `UsuarioDTO` si la operación es exitosa; de lo contrario, `null`.</returns>
-    public async Task<UsuarioDTO> Handle(EliminarUsuarioCommand request, CancellationToken cancellationToken)
+    /// <returns>El usuario eliminado en formato `UsuarioDto` si la operación es exitosa; de lo contrario, `null`.</returns>
+    public async Task<UsuarioDto> Handle(EliminarUsuarioCommand request, CancellationToken cancellationToken)
     {
         var usuarioEliminado = await _usuarioWriter.EliminarUsuarioAsync(request.UsuarioId);
         if (usuarioEliminado == null) return null;
 
-        return new UsuarioDTO
+        return new UsuarioDto
         {
             UsuarioId = usuarioEliminado.UsuarioId,
             Email = usuarioEliminado.Email,
@@ -68,12 +68,12 @@ public class EliminarUsuarioHandler : IRequestHandler<EliminarUsuarioCommand, Us
             UsuarioSuperiorId = usuarioEliminado.UsuarioSuperiorId,
             NombreSuperior = usuarioEliminado.NombreSuperior,
             EmailSuperior = usuarioEliminado.EmailSuperior,
-            Paises = usuarioEliminado.Paises.Select(p => new PaisDTO
+            Paises = usuarioEliminado.Paises.Select(p => new PaisDto
             {
                 PaisId = p.PaisId,
                 Estado = p.Estado
             }).ToList(),
-            Roles = usuarioEliminado.Roles.Select(r => new RolDTO
+            Roles = usuarioEliminado.Roles.Select(r => new RolDto
             {
                 RolId = r.RolId,
                 Estado = r.Estado

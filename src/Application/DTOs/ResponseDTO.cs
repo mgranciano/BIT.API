@@ -1,3 +1,4 @@
+#nullable disable
 using Application.Constants;
 
 namespace Application.DTOs;
@@ -6,7 +7,7 @@ namespace Application.DTOs;
 /// Representa la estructura estándar de respuesta de los endpoints.
 /// </summary>
 /// <typeparam name="T">Tipo de datos del objeto de respuesta.</typeparam>
-public class ResponseDTO<T>
+public class ResponseDto<T>
 {
     /// <summary>
     /// Estado de la operación, basado en los valores `S`, `W` o `E`.
@@ -26,7 +27,7 @@ public class ResponseDTO<T>
     /// <summary>
     /// Constructor de respuesta estándar sin datos en `ResponseObject`.
     /// </summary>
-    public ResponseDTO(string estatus, string mensaje)
+    public ResponseDto(string estatus, string mensaje)
     {
         Estatus = estatus;
         Mensaje = mensaje;
@@ -36,7 +37,7 @@ public class ResponseDTO<T>
     /// <summary>
     /// Constructor de respuesta estándar con un objeto en `ResponseObject`.
     /// </summary>
-    public ResponseDTO(string estatus, string mensaje, T? responseObject) 
+    public ResponseDto(string estatus, string mensaje, T? responseObject) 
     {
         Estatus = estatus;
         Mensaje = mensaje;
@@ -45,18 +46,18 @@ public class ResponseDTO<T>
     /// <summary>
     /// Método auxiliar para crear una respuesta exitosa.
     /// </summary>
-    public static ResponseDTO<T> Exito(string mensaje, T responseObject) =>
-        new ResponseDTO<T>(ApiEstatusGenerales.EstatusExito, mensaje, responseObject);
+    public static ResponseDto<T> Exito(string mensaje, T responseObject) =>
+        new ResponseDto<T>(ApiEstatusGenerales.EstatusExito, mensaje, responseObject);
 
     /// <summary>
     /// Método auxiliar para crear una respuesta de advertencia.
     /// </summary>
-    public static ResponseDTO<T> Advertencia(string mensaje) =>
-        new ResponseDTO<T>(ApiEstatusGenerales.EstatusAdvertencia, mensaje, default);
+    public static ResponseDto<T> Advertencia(string mensaje) =>
+        new ResponseDto<T>(ApiEstatusGenerales.EstatusAdvertencia, mensaje, default);
 
     /// <summary>
     /// Método auxiliar para crear una respuesta de error.
     /// </summary>
-    public static ResponseDTO<T> Error(string mensaje) =>
-        new ResponseDTO<T>(ApiEstatusGenerales.EstatusError, mensaje, default);
+    public static ResponseDto<T> Error(string mensaje) =>
+        new ResponseDto<T>(ApiEstatusGenerales.EstatusError, mensaje, default);
 }
