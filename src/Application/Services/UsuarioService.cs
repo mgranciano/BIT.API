@@ -67,8 +67,14 @@ public class UsuarioService : IUsuarioService
         return await _usuarioWriter.EliminarUsuarioAsync(usuarioId);
     }
 
-    public async Task<Usuario?> ObtenerUsuarioPorEmailAsync(string email)
+    /// <summary>
+    /// Obtiene un usuario por su correo electrónico.
+    /// </summary>
+    /// <param name="correo">Correo electronico del usuario</param>
+    /// <returns></returns>
+
+    public async Task<LogInUsuario> ObtenerPorCorreoAsync(string correo)
     {
-        return await _usuarioReader.ObtenerUsuarioPorEmailAsync(email);
+        return await _usuarioReader.ObtenerUsuarioPorCorreoAsync(correo);
     }
 }
