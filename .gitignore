@@ -7,7 +7,7 @@ logs/
 **/logs/
 
 # 🔹 Omite archivos de configuración local de usuario
-#.vscode/
+#.vscode/ 
 .idea/
 *.suo
 *.user
