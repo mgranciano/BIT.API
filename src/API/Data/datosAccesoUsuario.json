@@ -1,0 +1,48 @@
+[
+  {
+    "UsuarioId": "1",
+    "Email": "juan@example.com",
+    "Nombre": "Juan Pérez",
+    "IdSuperior": "2",
+    "NombreSuperior": "María Gómez",
+    "EmailSuperior": "maria@example.com",
+    "Paises": [
+      {
+        "IdPais": "MX",
+        "Estado": true
+      }
+    ],
+    "Roles": [
+      {
+        "IdRol": "Admin",
+        "Estado": true
+      }
+    ],
+    "FechaCreacion": "2024-01-01T10:00:00",
+    "FechaActualizacion": "2024-01-10T12:00:00",
+    "Estatus": true
+  },
+  {
+    "UsuarioId": "2",
+    "Email": "maria@example.com",
+    "Nombre": "María Gómez",
+    "IdSuperior": "",
+    "NombreSuperior": "",
+    "EmailSuperior": "",
+    "Paises": [
+      {
+        "IdPais": "US",
+        "Estado": true
+      }
+    ],
+    "Roles": [
+      {
+        "IdRol": "User",
+        "Estado": true
+      }
+    ],
+    "FechaCreacion": "2023-12-15T14:30:00",
+    "FechaActualizacion": "2024-02-01T09:45:00",
+    "Estatus": true
+  }
+]

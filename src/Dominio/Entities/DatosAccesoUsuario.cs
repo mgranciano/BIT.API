@@ -9,7 +9,7 @@ namespace Dominio.Entities
     /// Contiene la información general de un usuario, 
     /// datos personales, jerarquía organizacional, roles y países asignados.
     /// </remarks>
-    public class LogInUsuario
+    public class DatosAccesoUsuario
     {
         /// <summary>
         /// Identificador del usuario

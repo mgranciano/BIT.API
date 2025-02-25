@@ -14,6 +14,7 @@ namespace Infrastructure.Repositories;
 public class UsuarioRepositoryJSON : IUsuarioRepository
 {
     private readonly string _jsonFilePath;
+    private readonly string _jsonFilePathDatosAccesoUsuario;
 
     /// <summary>
     /// Constructor del repositorio de usuarios basado en JSON.
@@ -22,6 +23,7 @@ public class UsuarioRepositoryJSON : IUsuarioRepository
     {
         var basePath = AppDomain.CurrentDomain.BaseDirectory;
         _jsonFilePath = Path.Combine(basePath, "Data", "usuarios.json");
+        _jsonFilePathDatosAccesoUsuario = Path.Combine(basePath, "Data", "datosAccesoUsuario.json");
 
         Console.WriteLine($"📂 Ruta JSON: {_jsonFilePath}");
     }
@@ -39,6 +41,20 @@ public class UsuarioRepositoryJSON : IUsuarioRepository
 
         var json = await File.ReadAllTextAsync(_jsonFilePath);
         return JsonSerializer.Deserialize<List<Usuario>>(json) ?? new List<Usuario>();
+    }
+    /// <summary>
+    /// Carga Perfil del  usuarios desde el archivo JSON.
+    /// </summary>
+    /// <returns>El  usuario almacenados en el archivo JSON.</returns>
+    private async Task<DatosAccesoUsuario> CargarAccesoUsuarioAsync()
+    {
+        if (!File.Exists(_jsonFilePathDatosAccesoUsuario))
+        {
+            return new DatosAccesoUsuario();
+        }
+
+        var json = await File.ReadAllTextAsync(_jsonFilePathDatosAccesoUsuario);
+        return JsonSerializer.Deserialize<DatosAccesoUsuario>(json) ?? new DatosAccesoUsuario();
     }
 
     /// <summary>
@@ -134,9 +150,16 @@ public class UsuarioRepositoryJSON : IUsuarioRepository
         return null;
     }
 
-    public async Task<Usuario?> ObtenerUsuarioPorEmailAsync(string email)
+
+    /// <summary>
+    /// Obtiene un usuario por su correo.
+    /// </summary>
+    /// <param name="usuarioId">Correo del usuario a buscar.</param>
+    /// <returns>El usuario correspondiente si existe; de lo contrario, `null`.</returns>
+
+    public async Task<DatosAccesoUsuario?> ObtenerUsuarioPorEmailAsync(string email)
     {
-        var usuarios = await CargarUsuariosAsync();
-        return usuarios.FirstOrDefault(u => u.Email == email);
+        return await CargarAccesoUsuarioAsync();
     }
+
 }

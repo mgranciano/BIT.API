@@ -25,7 +25,7 @@ public interface IUsuarioRepository
     ///</summary>
     /// <param name="correo">Correo del usuario al que se desea buscar</param>
     /// <returns>Si el usuario existe, se retorna el usuario, de lo contrario, se retorna null </returns>
-    Task<LogInUsuario?> ObtenerUsuarioPorCorreoAsync(string correo);
+    Task<DatosAccesoUsuario?> ObtenerUsuarioPorEmailAsync(string correo);
 
     /// <summary>
     /// Registra un nuevo usuario en el sistema.

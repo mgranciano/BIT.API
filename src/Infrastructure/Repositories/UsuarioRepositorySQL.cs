@@ -110,10 +110,11 @@ public class UsuarioRepositorySQL : IUsuarioRepository
     /// </summary>
     /// <param name="email">El correo electrónico del usuario a buscar.</param>
     /// <returns>El usuario encontrado si existe; de lo contrario, `null`.</returns>
-    public async Task<Usuario?> ObtenerUsuarioPorEmailAsync(string email)
+    public async Task<DatosAccesoUsuario?> ObtenerUsuarioPorEmailAsync(string email)
     {
-        return await _context.Usuarios
-            .AsNoTracking() 
-            .FirstOrDefaultAsync(u => u.Email == email);
+        return new DatosAccesoUsuario();
+        //return await _context.Usuarios
+        //    .AsNoTracking() 
+        //    .FirstOrDefaultAsync(u => u.Email == email);
     }
 }

@@ -75,10 +75,10 @@ public class UsuarioService : IUsuarioService
     /// Obtiene un usuario por su correo electrónico.
     /// </summary>
     /// <param name="correo">Correo electronico del usuario</param>
-    /// <returns></returns>
+    /// <returns></returns> 
 
-    public async Task<LogInUsuario> ObtenerPorCorreoAsync(string correo)
+    public async Task<DatosAccesoUsuario?> ObtenerUsuarioPorEmailAsync(string emial)
     {
-        return await _usuarioRepository.ObtenerUsuarioPorCorreoAsync(correo);
+        return await _usuarioRepository.ObtenerUsuarioPorEmailAsync(emial);
     }
 }

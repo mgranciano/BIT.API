@@ -33,20 +33,25 @@ namespace Infrastructure.Repositories
         {
             throw new NotImplementedException();
         }
+
         /// <summary>
         /// Obtiene un usuario por su correo electrónico ejecutando un Stored Procedure.
         /// </summary>
         /// <param name="correo">Correo del usuario a buscar.</param>
         /// <returns>Objeto Usuario si existe, null en caso contrario.</returns>
-        public async Task<LogInUsuario?> ObtenerUsuarioPorCorreoAsync(string correo)
+        public async Task<DatosAccesoUsuario?> ObtenerUsuarioPorEmailAsync(string correo)
         {
 
-            using var connection = new SqlConnection(_connectionString);
-            return await connection.QueryFirstOrDefaultAsync<LogInUsuario>(
-                sp_ValidarUsuario,
-                new { CorreoElectronico = correo },
-                commandType: CommandType.StoredProcedure
-            );
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var resp= await connection.QueryFirstOrDefaultAsync<DatosAccesoUsuario>(
+                    sp_ValidarUsuario,
+                    new { CorreoElectronico = correo },
+                    commandType: CommandType.StoredProcedure
+                );
+                return resp;
+            }
+
         }
 
 

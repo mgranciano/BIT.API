@@ -19,7 +19,7 @@ public class LoginController : ControllerBase
     private readonly ILoginValidator _loginValidator;
     private readonly IUsuarioService _usuarioService;
 
-    public LoginController(JwtTokenService jwtTokenService, 
+    public LoginController(JwtTokenService jwtTokenService,
                            ILogService logService,
                            ILoginValidator loginValidator,
                            IUsuarioService usuarioService)
@@ -49,13 +49,13 @@ public class LoginController : ControllerBase
         }
         var usuario = await _usuarioService.ObtenerUsuarioPorEmailAsync(loginDto.Email);
 
-        if (usuario == null || !usuario.Estatus)
+        if (usuario == null || !usuario.Estado)
         {
             _logService.Error(nameof(UsuarioController), $"Usuario no encontrado o inactivo: {loginDto.Email}");
             return Unauthorized(ResponseDto<object>.Error("Usuario no encontrado o inactivo."));
         }
 
-        var token = _jwtTokenService.GenerateToken(usuario.UsuarioId, usuario.Email);
+        var token = _jwtTokenService.GenerateToken(usuario.IdUsuario, usuario.CorreoElectronico);
         _logService.Correcto(nameof(UsuarioController), $"Inicio de sesión exitoso para : {loginDto.Email}");
 
         var response = new LoginResponseDto { Token = token };
