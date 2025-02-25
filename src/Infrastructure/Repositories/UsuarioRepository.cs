@@ -44,7 +44,7 @@ namespace Infrastructure.Repositories
             using var connection = new SqlConnection(_connectionString);
             return await connection.QueryFirstOrDefaultAsync<LogInUsuario>(
                 sp_ValidarUsuario,
-                new { Correo = correo },
+                new { CorreoElectronico = correo },
                 commandType: CommandType.StoredProcedure
             );
         }

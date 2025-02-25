@@ -11,23 +11,5 @@ namespace Dominio.Interfaces;
 /// </remarks>
 public interface IUsuarioReader
 {
-    /// <summary>
-    /// Obtiene la lista completa de usuarios registrados en el sistema.
-    /// </summary>
-    /// <returns>Una colección de usuarios.</returns>
-    Task<IEnumerable<Usuario>> ObtenerUsuariosAsync();
-
-    /// <summary>
-    /// Obtiene un usuario por su identificador único.
-    /// </summary>
-    /// <param name="usuarioId">El identificador del usuario a buscar.</param>
-    /// <returns>El usuario correspondiente si existe; de lo contrario, `null`.</returns>
-    Task<Usuario?> ObtenerUsuarioPorIdAsync(string usuarioId);
-
-    /// <summary>
-    /// Obtiene un usuario por su correo electronico.
-    /// </summary>
-    /// <param name="email">El identificador del usuario a buscar.</param>
-    /// <returns>El usuario correspondiente si existe; de lo contrario, `null`.</returns>
-    Task<Usuario?> ObtenerUsuarioPorEmailAsync(string email);
+   
 }

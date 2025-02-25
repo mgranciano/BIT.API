@@ -36,7 +36,7 @@ public static class Program
     public static void Main(string[] args)
     {
         Log.Logger = new LoggerConfiguration()
-            .WriteTo.Console() 
+            .WriteTo.Console()
             .WriteTo.File("logs/api-log-.txt", rollingInterval: RollingInterval.Day)
             .CreateLogger();
 
@@ -72,12 +72,12 @@ public static class Program
         {
             Log.Information("✅ Envío de logs solo a Consola y Archivos.");
         }
-        
+
         /// <summary>
         /// Configuración de Autenticación con JWT
         /// </summary>
         var jwtSettings = configuration.GetSection("JwtSettings");
-        var secretKeyString = jwtSettings["SecretKey"] 
+        var secretKeyString = jwtSettings["SecretKey"]
                       ?? throw new InvalidOperationException("La clave secreta no puede ser nula en appsettings.json.");
 
 
@@ -115,13 +115,13 @@ public static class Program
         builder.Services.Configure<MvcOptions>(options =>
         {
             options.RespectBrowserAcceptHeader = false;
-            options.ReturnHttpNotAcceptable = true; 
+            options.ReturnHttpNotAcceptable = true;
         });
 
         builder.Services.AddControllers()
             .AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.PropertyNamingPolicy = null; 
+                options.JsonSerializerOptions.PropertyNamingPolicy = null;
                 options.JsonSerializerOptions.WriteIndented = true;
             });
 
@@ -174,22 +174,16 @@ public static class Program
             c.OperationFilter<ProducesUsuarioResponseFilter>();
         });
 
-        bool usarSql = false;
+        bool usarSql = true;
 
         if (usarSql)
         {
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
+            builder.Services.AddScoped<IUsuarioRepository>(sp => new UsuarioRepository(connectionString));
 
-            builder.Services.AddScoped<IUsuarioRepository, UsuarioRepositorySQL>();
-            builder.Services.AddScoped<IUsuarioReader, UsuarioRepositorySQL>();
-            builder.Services.AddScoped<IUsuarioWriter, UsuarioRepositorySQL>();
         }
         else
         {
             builder.Services.AddScoped<IUsuarioRepository, UsuarioRepositoryJSON>();
-            builder.Services.AddScoped<IUsuarioReader, UsuarioRepositoryJSON>();
-            builder.Services.AddScoped<IUsuarioWriter, UsuarioRepositoryJSON>();
         }
 
         builder.Services.AddScoped<IUsuarioService, UsuarioService>();

@@ -1,4 +1,5 @@
 ﻿
+#nullable disable
 namespace Dominio.Entities
 {
     /// <summary>

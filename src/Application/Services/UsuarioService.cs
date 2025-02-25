@@ -9,13 +9,17 @@ using Dominio.Interfaces;
 /// </summary>
 public class UsuarioService : IUsuarioService
 {
-    private readonly IUsuarioReader _usuarioReader;
-    private readonly IUsuarioWriter _usuarioWriter;
+    private readonly IUsuarioRepository _usuarioRepository;
 
-    public UsuarioService(IUsuarioReader usuarioReader, IUsuarioWriter usuarioWriter)
+
+    /// <summary>
+    /// Constructor de UsuarioService.
+    /// </summary>
+    /// <param name="usuarioReader">Servicio para la lectura de usuarios.</param>
+    /// <param name="usuarioWriter">Servicio para la escritura y modificación de usuarios.</param>
+    public UsuarioService(IUsuarioRepository usuarioRepository)
     {
-        _usuarioReader = usuarioReader;
-        _usuarioWriter = usuarioWriter;
+        _usuarioRepository = usuarioRepository;
     }
 
     /// <summary>
@@ -24,7 +28,7 @@ public class UsuarioService : IUsuarioService
     /// <returns>Una colección de usuarios.</returns>
     public async Task<IEnumerable<Usuario>> ObtenerUsuariosAsync()
     {
-        return await _usuarioReader.ObtenerUsuariosAsync();
+        return await _usuarioRepository.ObtenerUsuariosAsync();
     }
 
     /// <summary>
@@ -34,7 +38,7 @@ public class UsuarioService : IUsuarioService
     /// <returns>El usuario correspondiente si existe; de lo contrario, `null`.</returns>
     public async Task<Usuario?> ObtenerUsuarioPorIdAsync(string usuarioId)
     {
-        return await _usuarioReader.ObtenerUsuarioPorIdAsync(usuarioId);
+        return await _usuarioRepository.ObtenerUsuarioPorIdAsync(usuarioId);
     }
 
     /// <summary>
@@ -44,7 +48,7 @@ public class UsuarioService : IUsuarioService
     /// <returns>El usuario registrado con sus datos almacenados.</returns>
     public async Task<Usuario> RegistrarUsuarioAsync(Usuario usuario)
     {
-        return await _usuarioWriter.RegistrarUsuarioAsync(usuario);
+        return await _usuarioRepository.RegistrarUsuarioAsync(usuario);
     }
 
     /// <summary>
@@ -54,7 +58,7 @@ public class UsuarioService : IUsuarioService
     /// <returns>El usuario actualizado si la operación es exitosa; de lo contrario, `null`.</returns>
     public async Task<Usuario?> ActualizarUsuarioAsync(Usuario usuario)
     {
-        return await _usuarioWriter.ActualizarUsuarioAsync(usuario);
+        return await _usuarioRepository.ActualizarUsuarioAsync(usuario);
     }
 
     /// <summary>
@@ -64,7 +68,7 @@ public class UsuarioService : IUsuarioService
     /// <returns>El usuario eliminado si la operación es exitosa; de lo contrario, `null`.</returns>
     public async Task<Usuario?> EliminarUsuarioAsync(string usuarioId)
     {
-        return await _usuarioWriter.EliminarUsuarioAsync(usuarioId);
+        return await _usuarioRepository.EliminarUsuarioAsync(usuarioId);
     }
 
     /// <summary>
@@ -75,6 +79,6 @@ public class UsuarioService : IUsuarioService
 
     public async Task<LogInUsuario> ObtenerPorCorreoAsync(string correo)
     {
-        return await _usuarioReader.ObtenerUsuarioPorCorreoAsync(correo);
+        return await _usuarioRepository.ObtenerUsuarioPorCorreoAsync(correo);
     }
 }
