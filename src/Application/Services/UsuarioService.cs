@@ -1,25 +1,17 @@
+namespace Application.Services;
+
+using Application.Interfaces;
 using Dominio.Entities;
 using Dominio.Interfaces;
-
-namespace Application.Services;
 
 /// <summary>
 /// Servicio que gestiona las operaciones relacionadas con los usuarios.
 /// </summary>
-/// <remarks>
-/// Este servicio proporciona métodos para la obtención, creación, edición y eliminación 
-/// de usuarios, delegando la lógica de acceso a datos en `IUsuarioReader` y `IUsuarioWriter`.
-/// </remarks>
-public class UsuarioService
+public class UsuarioService : IUsuarioService
 {
     private readonly IUsuarioReader _usuarioReader;
     private readonly IUsuarioWriter _usuarioWriter;
 
-    /// <summary>
-    /// Constructor de UsuarioService.
-    /// </summary>
-    /// <param name="usuarioReader">Servicio para la lectura de usuarios.</param>
-    /// <param name="usuarioWriter">Servicio para la escritura y modificación de usuarios.</param>
     public UsuarioService(IUsuarioReader usuarioReader, IUsuarioWriter usuarioWriter)
     {
         _usuarioReader = usuarioReader;
@@ -73,5 +65,10 @@ public class UsuarioService
     public async Task<Usuario?> EliminarUsuarioAsync(string usuarioId)
     {
         return await _usuarioWriter.EliminarUsuarioAsync(usuarioId);
+    }
+
+    public async Task<Usuario?> ObtenerUsuarioPorEmailAsync(string email)
+    {
+        return await _usuarioReader.ObtenerUsuarioPorEmailAsync(email);
     }
 }

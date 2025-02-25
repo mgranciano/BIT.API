@@ -1,4 +1,3 @@
-#nullable disable
 using Application.Constants;
 
 namespace Application.DTOs;
@@ -60,4 +59,10 @@ public class ResponseDto<T>
     /// </summary>
     public static ResponseDto<T> Error(string mensaje) =>
         new ResponseDto<T>(ApiEstatusGenerales.EstatusError, mensaje, default);
+    
+    /// <summary>
+    /// Método auxiliar para crear una respuesta de error apartir de un arreglo de errores.
+    /// </summary>
+    public static ResponseDto<T> Error(string mensaje, List<string> errores) =>
+        new ResponseDto<T>("E", mensaje + ": " + string.Join(", ", errores), default);
 }
