@@ -133,4 +133,10 @@ public class UsuarioRepositoryJSON : IUsuarioRepository
         }
         return null;
     }
+
+    public async Task<Usuario?> ObtenerUsuarioPorEmailAsync(string email)
+    {
+        var usuarios = await CargarUsuariosAsync();
+        return usuarios.FirstOrDefault(u => u.Email == email);
+    }
 }

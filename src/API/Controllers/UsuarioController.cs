@@ -2,10 +2,10 @@ using API.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Application.Constants;
 using Application.DTOs;
-using Application.UseCases.Usuarios.Commands;
-using Application.UseCases.Usuarios.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Application.Interfaces;
+using Application.Extensions;
 
 namespace API.Controllers; 
 /// <summary>
@@ -20,18 +20,22 @@ namespace API.Controllers;
 [Authorize]
 public class UsuarioController : ControllerBase
 {
-    private readonly IMediator _mediator;
-    private readonly ILogger<UsuarioController> _logger;
+    private readonly ILogService _logService;
+    private readonly IUsuarioValidator _usuarioValidator; 
+    private readonly IUsuarioService _usuarioService;
 
     /// <summary>
     /// Constructor del controlador de usuarios.
     /// </summary>
     /// <param name="mediator">Instancia de MediatR para manejar las solicitudes CQRS.</param>
     /// <param name="logger">Instancia de Serilog para registrar eventos.</param>
-    public UsuarioController(IMediator mediator, ILogger<UsuarioController> logger)
+    public UsuarioController(ILogService logService,
+                             IUsuarioValidator usuarioValidator,
+                             IUsuarioService usuarioService)
     {
-        _mediator = mediator;
-        _logger = logger;
+        _logService = logService;
+        _usuarioValidator = usuarioValidator;
+        _usuarioService = usuarioService;
     }
 
     /// <summary>
@@ -41,18 +45,17 @@ public class UsuarioController : ControllerBase
     [ProducesUsuarioResponse(typeof(ResponseDto<IEnumerable<UsuarioDto>>), ApiDocumentacionUsuarios.ObtenerUsuariosSummary, ApiDocumentacionUsuarios.ObtenerUsuariosDescription)]
     public async Task<IActionResult> ObtenerUsuarios()
     {
-        _logger.LogInformation("📢 [INFO] Se solicitó obtener todos los usuarios.");
-
-        var usuarios = await _mediator.Send(new ObtenerUsuariosQuery());
+        _logService.Informacion(nameof(UsuarioController), $"Se solicitó obtener todos los usuarios.");
+        var usuarios = await _usuarioService.ObtenerUsuariosAsync();
 
         if (usuarios == null || !usuarios.Any())
         {
-            _logger.LogWarning("⚠️ [WARNING] No se encontraron usuarios.");
+            _logService.Advertencia(nameof(UsuarioController), $"No se encontraron usuarios.");
             return NotFound(ResponseDto<object>.Advertencia(ApiMensajesUsuarios.UsuariosNoEncontrados));
         }
 
-        _logger.LogInformation("✅ [SUCCESS] Usuarios obtenidos correctamente.");
-        return Ok(ResponseDto<IEnumerable<UsuarioDto>>.Exito(ApiMensajesUsuarios.UsuariosEncontrados, usuarios));
+        _logService.Correcto(nameof(UsuarioController), $"Usuarios obtenidos correctamente.");
+        return Ok(ResponseDto<IEnumerable<UsuarioDto>>.Exito(ApiMensajesUsuarios.UsuariosEncontrados, usuarios.ToDtoList()));
     }
 
     /// <summary>
@@ -63,18 +66,18 @@ public class UsuarioController : ControllerBase
     [ProducesUsuarioResponse(typeof(ResponseDto<UsuarioDto>), ApiDocumentacionUsuarios.ObtenerUsuarioSummary, ApiDocumentacionUsuarios.ObtenerUsuarioDescription)]
     public async Task<IActionResult> ObtenerUsuario([FromRoute] string usuarioId)
     {
-        _logger.LogInformation("📢 [INFO] Se solicitó obtener el usuario con ID {UsuarioId}.", usuarioId);
+        _logService.Informacion(nameof(UsuarioController), $"Se solicitó obtener el usuario con ID {usuarioId}.");
 
-        var usuario = await _mediator.Send(new ObtenerUsuarioPorIdQuery(usuarioId));
+        var usuario = await _usuarioService.ObtenerUsuarioPorIdAsync(usuarioId);
 
         if (usuario == null)
         {
-            _logger.LogWarning("⚠️ [WARNING] No se encontró el usuario con ID {UsuarioId}.", usuarioId);
+            _logService.Advertencia(nameof(UsuarioController), $"No se encontró el usuario con ID {usuarioId}.");
             return NotFound(ResponseDto<object>.Advertencia(ApiMensajesUsuarios.UsuarioNoEncontrado));
         }
 
-        _logger.LogInformation("✅ [SUCCESS] Usuario encontrado: {UsuarioId}.", usuarioId);
-        return Ok(ResponseDto<UsuarioDto>.Exito(ApiMensajesUsuarios.UsuarioEncontrado, usuario));
+        _logService.Correcto(nameof(UsuarioController), $"Usuario encontrado: {usuarioId}.");
+        return Ok(ResponseDto<UsuarioDto>.Exito(ApiMensajesUsuarios.UsuarioEncontrado, usuario.ToDto()));
     }
 
     /// <summary>
@@ -85,18 +88,23 @@ public class UsuarioController : ControllerBase
     [ProducesUsuarioResponse(typeof(ResponseDto<UsuarioDto>), ApiDocumentacionUsuarios.AltaUsuarioSummary, ApiDocumentacionUsuarios.AltaUsuarioDescription)]
     public async Task<IActionResult> AltaUsuario([FromBody] UsuarioDto usuario)
     {
-        if (usuario == null || string.IsNullOrEmpty(usuario.Email) || string.IsNullOrEmpty(usuario.Nombre))
+        _logService.Informacion(nameof(UsuarioController), $"Se solicita el alta del usuario {usuario.Email}.");
+
+        var validationResult = _usuarioValidator.Validar(usuario);
+
+        if (!validationResult.IsValid)
         {
-            _logger.LogWarning("⚠️ [WARNING] Datos inválidos en el registro de usuario.");
-            return BadRequest(ResponseDto<object>.Error(ApiMensajesUsuarios.DatosInvalidos));
+            var errores = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+            _logService.Advertencia(nameof(UsuarioController), $"Errores de validación: {string.Join(", ", errores)}");
+            return BadRequest(ResponseDto<object>.Error("Datos inválidos", errores));
         }
 
-        _logger.LogInformation("📢 [INFO] Se está registrando un nuevo usuario.");
-        var nuevoUsuario = await _mediator.Send(new AltaUsuarioCommand(usuario));
+        _logService.Advertencia(nameof(UsuarioController), $"Se está registrando un nuevo usuario {usuario.Email}.");
+        var nuevoUsuario = await _usuarioService.RegistrarUsuarioAsync(usuario.ToEntity()); 
 
-        _logger.LogInformation("✅ [SUCCESS] Usuario registrado correctamente: {UsuarioId}.", nuevoUsuario.UsuarioId);
+        _logService.Correcto(nameof(UsuarioController), $"Usuario registrado correctamente: {nuevoUsuario.UsuarioId}.");
         return CreatedAtAction(nameof(ObtenerUsuario), new { usuarioId = nuevoUsuario.UsuarioId },
-            ResponseDto<UsuarioDto>.Exito(ApiMensajesUsuarios.UsuarioCreado, nuevoUsuario));
+            ResponseDto<UsuarioDto>.Exito(ApiMensajesUsuarios.UsuarioCreado, nuevoUsuario.ToDto()));
     }
 
     /// <summary>
@@ -108,24 +116,30 @@ public class UsuarioController : ControllerBase
     [ProducesUsuarioResponse(typeof(ResponseDto<UsuarioDto>), ApiDocumentacionUsuarios.ActualizarUsuarioSummary, ApiDocumentacionUsuarios.ActualizarUsuarioDescription)]
     public async Task<IActionResult> ActualizarUsuario([FromRoute] string usuarioId, [FromBody] UsuarioDto usuario)
     {
+        _logService.Informacion(nameof(UsuarioController), $"Se solicita la actualización del usuario {usuario.Email}.");
+
         if (usuarioId != usuario.UsuarioId)
         {
-            _logger.LogWarning("⚠️ [WARNING] ID de usuario en URL no coincide con el cuerpo de la solicitud.");
+            _logService.Advertencia(nameof(UsuarioController), $"ID de usuario en URL no coincide con el cuerpo de la solicitud.");
             return BadRequest(ResponseDto<object>.Error(ApiMensajesUsuarios.IdNoCoincide));
         }
 
-        _logger.LogInformation("📢 [INFO] Se está actualizando el usuario con ID {UsuarioId}.", usuarioId);
-        var usuarioActualizado = await _mediator.Send(new ActualizarUsuarioCommand(usuario));
+        _logService.Advertencia(nameof(UsuarioController), $"Se está actualizando el usuario con ID {usuarioId}.");
+        var usuarioActualizado = await _usuarioService.ActualizarUsuarioAsync(usuario.ToEntity());
 
         if (usuarioActualizado == null)
         {
-            _logger.LogWarning("⚠️ [WARNING] No se encontró el usuario con ID {UsuarioId}.", usuarioId);
+            _logService.Advertencia(nameof(UsuarioController), $"No se encontró el usuario con ID {usuarioId}.");
             return NotFound(ResponseDto<object>.Advertencia(ApiMensajesUsuarios.UsuarioNoEncontrado));
         }
 
-        _logger.LogInformation("✅ [SUCCESS] Usuario actualizado correctamente: {UsuarioId}.", usuarioId);
-        return Ok(ResponseDto<UsuarioDto>.Exito(ApiMensajesUsuarios.UsuarioActualizado, usuarioActualizado));
+        // ✅ Convertir Usuario (Entities) a UsuarioDto (DTOs) antes de devolverlo
+        var usuarioActualizadoDto = usuarioActualizado.ToDto();
+
+        _logService.Correcto(nameof(UsuarioController), $"Usuario actualizado correctamente: {usuarioId}.");
+        return Ok(ResponseDto<UsuarioDto>.Exito(ApiMensajesUsuarios.UsuarioActualizado, usuarioActualizadoDto));
     }
+
 
     /// <summary>
     /// Realiza un borrado lógico de un usuario, cambiando su estado a inactivo.
@@ -135,16 +149,16 @@ public class UsuarioController : ControllerBase
     [ProducesUsuarioResponse(typeof(ResponseDto<UsuarioDto>), ApiDocumentacionUsuarios.EliminarUsuarioSummary, ApiDocumentacionUsuarios.EliminarUsuarioDescription)]
     public async Task<IActionResult> EliminarUsuario([FromRoute] string usuarioId)
     {
-        _logger.LogInformation("📢 [INFO] Se está eliminando lógicamente el usuario con ID {UsuarioId}.", usuarioId);
-        var usuarioEliminado = await _mediator.Send(new EliminarUsuarioCommand(usuarioId));
+        _logService.Informacion(nameof(UsuarioController), $"Se solicita el eliminación del usuario {usuarioId}.");
+        var usuarioEliminado = await _usuarioService.EliminarUsuarioAsync(usuarioId);
 
         if (usuarioEliminado == null)
         {
-            _logger.LogWarning("⚠️ [WARNING] No se encontró el usuario con ID {UsuarioId}.", usuarioId);
+             _logService.Advertencia(nameof(UsuarioController), $" No se encontró el usuario con ID {usuarioId}.");
             return NotFound(ResponseDto<object>.Advertencia(ApiMensajesUsuarios.RegistroNoEncontrado));
         }
 
-        _logger.LogInformation("✅ [SUCCESS] Usuario eliminado lógicamente: {UsuarioId}.", usuarioId);
-        return Ok(ResponseDto<UsuarioDto>.Exito(ApiMensajesUsuarios.UsuarioEliminado, usuarioEliminado));
+        _logService.Correcto(nameof(UsuarioController), $"Usuario eliminado correctamente: {usuarioId}.");
+        return Ok(ResponseDto<UsuarioDto>.Exito(ApiMensajesUsuarios.UsuarioEliminado, usuarioEliminado.ToDto()));
     }
 }

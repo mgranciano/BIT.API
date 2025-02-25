@@ -104,4 +104,16 @@ public class UsuarioRepositorySQL : IUsuarioRepository
         }
         return null;
     }
+
+    /// <summary>
+    /// Busca un usuario en el sistema utilizando su dirección de correo electrónico.
+    /// </summary>
+    /// <param name="email">El correo electrónico del usuario a buscar.</param>
+    /// <returns>El usuario encontrado si existe; de lo contrario, `null`.</returns>
+    public async Task<Usuario?> ObtenerUsuarioPorEmailAsync(string email)
+    {
+        return await _context.Usuarios
+            .AsNoTracking() 
+            .FirstOrDefaultAsync(u => u.Email == email);
+    }
 }

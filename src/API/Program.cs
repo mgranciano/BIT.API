@@ -1,11 +1,14 @@
 namespace API;
+
 using API.Attributes;
 using Application.Constants;
 using Application.DTOs;
+using Application.Interfaces;
 using Application.Services;
 using Dominio.Interfaces;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
@@ -124,7 +127,6 @@ public static class Program
 
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-        builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Application.UseCases.Usuarios.Queries.ObtenerUsuariosQuery).Assembly));
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
 
@@ -190,8 +192,11 @@ public static class Program
             builder.Services.AddScoped<IUsuarioWriter, UsuarioRepositoryJSON>();
         }
 
-        builder.Services.AddScoped<UsuarioService>();
+        builder.Services.AddScoped<IUsuarioService, UsuarioService>();
         builder.Services.AddScoped<JwtTokenService>();
+        builder.Services.AddScoped<ILogService, LogService>(); 
+        builder.Services.AddScoped<IUsuarioValidator, UsuarioValidatorService>();
+        builder.Services.AddScoped<ILoginValidator, LoginValidatorService>();
 
         var app = builder.Build();
 
@@ -200,6 +205,17 @@ public static class Program
             app.UseHttpsRedirection();
         }
 
+        /// <summary>
+        /// ✅ Middleware para generar un UID único en cada solicitud y rastrear logs
+        /// </summary>
+        app.Use(async (context, next) =>
+        {
+            var logService = context.RequestServices.GetRequiredService<ILogService>();
+            logService.GenerarUID();
+            logService.EstablecerEndpoint(context.Request.Path);
+            await next.Invoke();
+        });
+        
         app.UseAuthentication();
         app.UseAuthorization();
 

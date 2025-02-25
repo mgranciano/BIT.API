@@ -23,4 +23,11 @@ public interface IUsuarioReader
     /// <param name="usuarioId">El identificador del usuario a buscar.</param>
     /// <returns>El usuario correspondiente si existe; de lo contrario, `null`.</returns>
     Task<Usuario?> ObtenerUsuarioPorIdAsync(string usuarioId);
+
+    /// <summary>
+    /// Obtiene un usuario por su correo electronico.
+    /// </summary>
+    /// <param name="email">El identificador del usuario a buscar.</param>
+    /// <returns>El usuario correspondiente si existe; de lo contrario, `null`.</returns>
+    Task<Usuario?> ObtenerUsuarioPorEmailAsync(string email);
 }

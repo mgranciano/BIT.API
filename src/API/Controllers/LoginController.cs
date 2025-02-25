@@ -1,11 +1,10 @@
 namespace API.Controllers;
 
 using Application.DTOs;
-using Application.UseCases.Usuarios.Queries;
+using Application.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
 /// <summary>
@@ -16,14 +15,19 @@ using System.Threading.Tasks;
 public class LoginController : ControllerBase
 {
     private readonly JwtTokenService _jwtTokenService;
-    private readonly IMediator _mediator; // ✅ Usamos MediatR en lugar de `IUsuarioRepository`
-    private readonly ILogger<LoginController> _logger;
+    private readonly ILogService _logService;
+    private readonly ILoginValidator _loginValidator;
+    private readonly IUsuarioService _usuarioService;
 
-    public LoginController(JwtTokenService jwtTokenService, IMediator mediator, ILogger<LoginController> logger)
+    public LoginController(JwtTokenService jwtTokenService, 
+                           ILogService logService,
+                           ILoginValidator loginValidator,
+                           IUsuarioService usuarioService)
     {
         _jwtTokenService = jwtTokenService;
-        _mediator = mediator;
-        _logger = logger;
+        _logService = logService;
+        _loginValidator = loginValidator;
+        _usuarioService = usuarioService;
     }
 
     /// <summary>
@@ -34,21 +38,25 @@ public class LoginController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> Authenticate([FromBody] LoginDto loginDto)
     {
-        _logger.LogInformation("📢 Intento de inicio de sesión para {Email}", loginDto.Email);
+        _logService.Informacion(nameof(UsuarioController), $"Intento de inicio de sesión para: {loginDto.Email}");
 
-        // 🔹 Buscar al usuario por Email usando `MediatR`
-        var usuario = await _mediator.Send(new ObtenerUsuarioPorEmailQuery(loginDto.Email));
+        var validationResult = _loginValidator.Validar(loginDto);
+        if (!validationResult.IsValid)
+        {
+            var errores = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+            _logService.Advertencia(nameof(LoginController), $"Errores de validación: {string.Join(", ", errores)}");
+            return BadRequest(ResponseDto<object>.Error("Datos inválidos", errores));
+        }
+        var usuario = await _usuarioService.ObtenerUsuarioPorEmailAsync(loginDto.Email);
 
-        // 🔹 Validar si el usuario existe y tiene `estatus = true`
         if (usuario == null || !usuario.Estatus)
         {
-            _logger.LogWarning("⚠️ Usuario no encontrado o inactivo: {Email}", loginDto.Email);
+            _logService.Error(nameof(UsuarioController), $"Usuario no encontrado o inactivo: {loginDto.Email}");
             return Unauthorized(ResponseDto<object>.Error("Usuario no encontrado o inactivo."));
         }
 
-        // 🔹 Si el usuario existe y está activo, generar JWT
         var token = _jwtTokenService.GenerateToken(usuario.UsuarioId, usuario.Email);
-        _logger.LogInformation("✅ Inicio de sesión exitoso para {Email}", loginDto.Email);
+        _logService.Correcto(nameof(UsuarioController), $"Inicio de sesión exitoso para : {loginDto.Email}");
 
         var response = new LoginResponseDto { Token = token };
         return Ok(ResponseDto<LoginResponseDto>.Exito("Inicio de sesión exitoso.", response));
