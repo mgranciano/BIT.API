@@ -13,4 +13,5 @@ public interface IUsuarioService
     Task<Usuario> RegistrarUsuarioAsync(Usuario usuario);
     Task<Usuario?> ActualizarUsuarioAsync(Usuario usuario);
     Task<Usuario?> EliminarUsuarioAsync(string usuarioId);
+    Task<List<Modulo>> ObtenerModulosPorUsuarioAsync(string idUsuario);
 }

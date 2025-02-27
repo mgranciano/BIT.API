@@ -53,7 +53,7 @@ public class UsuarioRepositorySQL : IUsuarioRepository
     {
         usuario.FechaCreacion = DateTime.UtcNow;
         usuario.FechaActualizacion = DateTime.UtcNow;
-        usuario.Estatus = true;
+        usuario.Estado = true;
 
         _context.Usuarios.Add(usuario);
         await _context.SaveChangesAsync();
@@ -67,19 +67,19 @@ public class UsuarioRepositorySQL : IUsuarioRepository
     /// <returns>El usuario actualizado si la operación es exitosa; de lo contrario, `null`.</returns>
     public async Task<Usuario?> ActualizarUsuarioAsync(Usuario usuario)
     {
-        var usuarioExistente = await _context.Usuarios.FindAsync(usuario.UsuarioId);
+        var usuarioExistente = await _context.Usuarios.FindAsync(usuario.IdUsuario);
 
         if (usuarioExistente != null)
         {
-            usuarioExistente.Email = usuario.Email;
-            usuarioExistente.Nombre = usuario.Nombre;
-            usuarioExistente.UsuarioSuperiorId = usuario.UsuarioSuperiorId;
+            usuarioExistente.CorreoElectronico = usuario.CorreoElectronico;
+            usuarioExistente.NombreCompleto = usuario.NombreCompleto;
+            usuarioExistente.IdSuperior = usuario.IdSuperior;
             usuarioExistente.NombreSuperior = usuario.NombreSuperior;
-            usuarioExistente.EmailSuperior = usuario.EmailSuperior;
-            usuarioExistente.Paises = usuario.Paises;
-            usuarioExistente.Roles = usuario.Roles;
+            usuarioExistente.CorreoElectronicoSuperior = usuario.CorreoElectronicoSuperior;
+            usuarioExistente.Pais = usuario.Pais;
+            usuarioExistente.Rol = usuario.Rol;
             usuarioExistente.FechaActualizacion = DateTime.UtcNow;
-            usuarioExistente.Estatus = usuario.Estatus;
+            usuarioExistente.Estado = usuario.Estado;
 
             await _context.SaveChangesAsync();
             return usuarioExistente;
@@ -97,7 +97,7 @@ public class UsuarioRepositorySQL : IUsuarioRepository
         var usuario = await _context.Usuarios.FindAsync(usuarioId);
         if (usuario != null)
         {
-            usuario.Estatus = false;
+            usuario.Estado = false;
             usuario.FechaActualizacion = DateTime.UtcNow;
             await _context.SaveChangesAsync();
             return usuario;
@@ -108,13 +108,18 @@ public class UsuarioRepositorySQL : IUsuarioRepository
     /// <summary>
     /// Busca un usuario en el sistema utilizando su dirección de correo electrónico.
     /// </summary>
-    /// <param name="email">El correo electrónico del usuario a buscar.</param>
+    /// <param name="correo">El correo electrónico del usuario a buscar.</param>
     /// <returns>El usuario encontrado si existe; de lo contrario, `null`.</returns>
-    public async Task<DatosAccesoUsuario?> ObtenerUsuarioPorEmailAsync(string email)
+    public async Task<DatosAccesoUsuario?> ObtenerUsuarioPorEmailAsync(string correo)
     {
         return new DatosAccesoUsuario();
         //return await _context.Usuarios
         //    .AsNoTracking() 
         //    .FirstOrDefaultAsync(u => u.Email == email);
+    }
+
+    public Task<IEnumerable<ModuloGeneral>> ObtenerModulosPorUsuarioAsync(string idUsuario)
+    {
+        throw new NotImplementedException();
     }
 }

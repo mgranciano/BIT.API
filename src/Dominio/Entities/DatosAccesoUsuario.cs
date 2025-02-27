@@ -23,20 +23,17 @@ namespace Dominio.Entities
         /// Correo electronico del usuario asociado a la compania
         /// </summary>
         public string CorreoElectronico { get; set; }
+
         /// <summary>
-        /// Identificador del superior al que está asignado el usuario
+        /// Paises asignados al usuario
         /// </summary>
-        public string IdSuperior { get; set; }
+        public string Pais { get; set; }
         /// <summary>
-        /// Nombre del superior del usuario al que está asignado
+        /// Rol asignado al usuario
         /// </summary>
-        public string NombreSuperior { get; set; }
+        public string Rol { get; set; }
         /// <summary>
-        /// Correo electronico del superior al que está asignado el usuario
-        /// </summary>
-        public string CorreoElectronicoSuperior { get; set; }
-        /// <summary>
-        /// Estado en el que se encuentra el usuario, Si el valor Es true, usuario Activo, de lo contrario, usuario inactivo
+        /// Indica si el usuario esta activo o inactivo
         /// </summary>
         public bool Estado { get; set; }
 

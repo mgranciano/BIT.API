@@ -34,6 +34,6 @@ public class ApplicationDbContext : DbContext
         /// <summary>
         /// Configura la clave primaria de la entidad `Usuario`.
         /// </summary>
-        modelBuilder.Entity<Usuario>().HasKey(u => u.UsuarioId);
+        modelBuilder.Entity<Usuario>().HasKey(u => u.IdUsuario);
     }
 }

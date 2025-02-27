@@ -84,7 +84,7 @@ public class UsuarioRepositoryJSON : IUsuarioRepository
     public async Task<Usuario?> ObtenerUsuarioPorIdAsync(string usuarioId)
     {
         var usuarios = await CargarUsuariosAsync();
-        return usuarios.FirstOrDefault(u => u.UsuarioId == usuarioId);
+        return usuarios.FirstOrDefault(u => u.IdUsuario == usuarioId);
     }
 
     /// <summary>
@@ -97,7 +97,7 @@ public class UsuarioRepositoryJSON : IUsuarioRepository
         var usuarios = await CargarUsuariosAsync();
         usuario.FechaCreacion = DateTime.UtcNow;
         usuario.FechaActualizacion = DateTime.UtcNow;
-        usuario.Estatus = true;
+        usuario.Estado = true;
         usuarios.Add(usuario);
         await GuardarUsuariosAsync(usuarios);
         return usuario;
@@ -111,19 +111,19 @@ public class UsuarioRepositoryJSON : IUsuarioRepository
     public async Task<Usuario?> ActualizarUsuarioAsync(Usuario usuario)
     {
         var usuarios = await CargarUsuariosAsync();
-        var usuarioExistente = usuarios.FirstOrDefault(u => u.UsuarioId == usuario.UsuarioId);
+        var usuarioExistente = usuarios.FirstOrDefault(u => u.IdUsuario == usuario.IdUsuario);
 
         if (usuarioExistente != null)
         {
-            usuarioExistente.Email = usuario.Email;
-            usuarioExistente.Nombre = usuario.Nombre;
-            usuarioExistente.UsuarioSuperiorId = usuario.UsuarioSuperiorId;
+            usuarioExistente.CorreoElectronico = usuario.CorreoElectronico;
+            usuarioExistente.NombreCompleto = usuario.NombreCompleto;
+            usuarioExistente.IdSuperior = usuario.IdSuperior;
             usuarioExistente.NombreSuperior = usuario.NombreSuperior;
-            usuarioExistente.EmailSuperior = usuario.EmailSuperior;
-            usuarioExistente.Paises = usuario.Paises;
-            usuarioExistente.Roles = usuario.Roles;
+            usuarioExistente.CorreoElectronicoSuperior = usuario.CorreoElectronicoSuperior;
+            usuarioExistente.Pais = usuario.Pais;
+            usuarioExistente.Rol = usuario.Rol;
             usuarioExistente.FechaActualizacion = DateTime.UtcNow;
-            usuarioExistente.Estatus = usuario.Estatus;
+            usuarioExistente.Estado = usuario.Estado;
 
             await GuardarUsuariosAsync(usuarios);
             return usuarioExistente;
@@ -139,10 +139,10 @@ public class UsuarioRepositoryJSON : IUsuarioRepository
     public async Task<Usuario?> EliminarUsuarioAsync(string usuarioId)
     {
         var usuarios = await CargarUsuariosAsync();
-        var usuario = usuarios.FirstOrDefault(u => u.UsuarioId == usuarioId);
+        var usuario = usuarios.FirstOrDefault(u => u.IdUsuario == usuarioId);
         if (usuario != null)
         {
-            usuario.Estatus = false;
+            usuario.Estado = false;
             usuario.FechaActualizacion = DateTime.UtcNow;
             await GuardarUsuariosAsync(usuarios);
             return usuario;
@@ -157,9 +157,13 @@ public class UsuarioRepositoryJSON : IUsuarioRepository
     /// <param name="usuarioId">Correo del usuario a buscar.</param>
     /// <returns>El usuario correspondiente si existe; de lo contrario, `null`.</returns>
 
-    public async Task<DatosAccesoUsuario?> ObtenerUsuarioPorEmailAsync(string email)
+    public async Task<DatosAccesoUsuario?> ObtenerUsuarioPorEmailAsync(string correo)
     {
         return await CargarAccesoUsuarioAsync();
     }
 
+    public Task<IEnumerable<ModuloGeneral>> ObtenerModulosPorUsuarioAsync(string idUsuario)
+    {
+        throw new NotImplementedException();
+    }
 }

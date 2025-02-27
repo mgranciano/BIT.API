@@ -14,17 +14,17 @@ public static class UsuarioExtensions
     {
         return new UsuarioDto
         {
-            UsuarioId = usuario.UsuarioId,
-            Email = usuario.Email,
-            Nombre = usuario.Nombre,
-            UsuarioSuperiorId = usuario.UsuarioSuperiorId,
+            UsuarioId = usuario.IdUsuario,
+            Email = usuario.CorreoElectronico,
+            Nombre = usuario.NombreCompleto,
+            UsuarioSuperiorId = usuario.IdSuperior,
             NombreSuperior = usuario.NombreSuperior,
-            EmailSuperior = usuario.EmailSuperior,
-            Paises = usuario.Paises?.ToPaisDtoList(),
-            Roles = usuario.Roles?.ToRolDtoList(),
+            EmailSuperior = usuario.CorreoElectronicoSuperior,
+            Paises = usuario.Pais?.ToPaisDtoList(),
+            Roles = usuario.Rol?.ToRolDtoList(),
             FechaCreacion = usuario.FechaCreacion,
             FechaActualizacion = usuario.FechaActualizacion,
-            Estatus = usuario.Estatus
+            Estatus = usuario.Estado
         };
     }
 
@@ -32,17 +32,17 @@ public static class UsuarioExtensions
     {
         return new Usuario
         {
-            UsuarioId = usuarioDto.UsuarioId,
-            Email = usuarioDto.Email,
-            Nombre = usuarioDto.Nombre,
-            UsuarioSuperiorId = usuarioDto.UsuarioSuperiorId,
+            IdUsuario = usuarioDto.UsuarioId,
+            CorreoElectronico = usuarioDto.Email,
+            NombreCompleto = usuarioDto.Nombre,
+            IdSuperior = usuarioDto.UsuarioSuperiorId,
             NombreSuperior = usuarioDto.NombreSuperior,
-            EmailSuperior = usuarioDto.EmailSuperior,
-            Paises = usuarioDto.Paises?.ToPaisEntityList(),
-            Roles = usuarioDto.Roles?.ToRolEntityList(),
+            CorreoElectronicoSuperior = usuarioDto.EmailSuperior,
+            Pais = usuarioDto.Paises?.ToPaisEntityList(),
+            Rol = usuarioDto.Roles?.ToRolEntityList(),
             FechaCreacion = usuarioDto.FechaCreacion,
             FechaActualizacion = usuarioDto.FechaActualizacion,
-            Estatus = usuarioDto.Estatus
+            Estado = usuarioDto.Estatus
         };
     }
 

@@ -47,4 +47,10 @@ public interface IUsuarioRepository
     /// <param name="usuarioId">El identificador del usuario a eliminar.</param>
     /// <returns>El usuario eliminado si la operación es exitosa; de lo contrario, `null`.</returns>
     Task<Usuario?> EliminarUsuarioAsync(string usuarioId);
+    /// <summary>
+    /// Obtiene los modulos a los que tiene acceso un usuario
+    /// </summary>
+    /// <param name="idUsuario">Identificador del Usuario</param>
+    /// <returns>Retorna una lista de modulos y submodulos al que tiene acceso el usuario</returns>
+    Task<IEnumerable<ModuloGeneral>> ObtenerModulosPorUsuarioAsync(string idUsuario);
 }

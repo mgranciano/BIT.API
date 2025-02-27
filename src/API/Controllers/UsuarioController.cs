@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Application.Interfaces;
 using Application.Extensions;
 
-namespace API.Controllers; 
+namespace API.Controllers;
 /// <summary>
 /// Controlador para la gestión de usuarios.
 /// </summary>
@@ -21,7 +21,7 @@ namespace API.Controllers;
 public class UsuarioController : ControllerBase
 {
     private readonly ILogService _logService;
-    private readonly IUsuarioValidator _usuarioValidator; 
+    private readonly IUsuarioValidator _usuarioValidator;
     private readonly IUsuarioService _usuarioService;
 
     /// <summary>
@@ -100,10 +100,10 @@ public class UsuarioController : ControllerBase
         }
 
         _logService.Advertencia(nameof(UsuarioController), $"Se está registrando un nuevo usuario {usuario.Email}.");
-        var nuevoUsuario = await _usuarioService.RegistrarUsuarioAsync(usuario.ToEntity()); 
+        var nuevoUsuario = await _usuarioService.RegistrarUsuarioAsync(usuario.ToEntity());
 
-        _logService.Correcto(nameof(UsuarioController), $"Usuario registrado correctamente: {nuevoUsuario.UsuarioId}.");
-        return CreatedAtAction(nameof(ObtenerUsuario), new { usuarioId = nuevoUsuario.UsuarioId },
+        _logService.Correcto(nameof(UsuarioController), $"Usuario registrado correctamente: {nuevoUsuario.IdUsuario}.");
+        return CreatedAtAction(nameof(ObtenerUsuario), new { usuarioId = nuevoUsuario.IdUsuario },
             ResponseDto<UsuarioDto>.Exito(ApiMensajesUsuarios.UsuarioCreado, nuevoUsuario.ToDto()));
     }
 
@@ -154,7 +154,7 @@ public class UsuarioController : ControllerBase
 
         if (usuarioEliminado == null)
         {
-             _logService.Advertencia(nameof(UsuarioController), $" No se encontró el usuario con ID {usuarioId}.");
+            _logService.Advertencia(nameof(UsuarioController), $" No se encontró el usuario con ID {usuarioId}.");
             return NotFound(ResponseDto<object>.Advertencia(ApiMensajesUsuarios.RegistroNoEncontrado));
         }
 

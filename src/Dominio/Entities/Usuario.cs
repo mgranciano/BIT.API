@@ -13,22 +13,22 @@ public class Usuario
     /// <summary>
     /// Identificador único del usuario.
     /// </summary>
-    public string UsuarioId { get; set; }
+    public string IdUsuario { get; set; }
 
     /// <summary>
     /// Correo electrónico del usuario.
     /// </summary>
-    public string Email { get; set; }
+    public string CorreoElectronico { get; set; }
 
     /// <summary>
     /// Nombre completo del usuario.
     /// </summary>
-    public string Nombre { get; set; }
+    public string NombreCompleto { get; set; }
 
     /// <summary>
     /// Identificador del usuario superior (jefe o líder directo).
     /// </summary>
-    public string UsuarioSuperiorId { get; set; }
+    public string IdSuperior { get; set; }
 
     /// <summary>
     /// Nombre del usuario superior.
@@ -38,17 +38,17 @@ public class Usuario
     /// <summary>
     /// Correo electrónico del usuario superior.
     /// </summary>
-    public string EmailSuperior { get; set; }
+    public string CorreoElectronicoSuperior { get; set; }
 
     /// <summary>
     /// Lista de países asignados al usuario.
     /// </summary>
-    public List<Pais> Paises { get; set; }
+    public List<Pais> Pais { get; set; }
 
     /// <summary>
     /// Lista de roles asignados al usuario.
     /// </summary>
-    public List<Rol> Roles { get; set; }
+    public List<Rol> Rol { get; set; }
 
     /// <summary>
     /// Fecha en la que el usuario fue creado en el sistema.
@@ -63,7 +63,7 @@ public class Usuario
     /// <summary>
     /// Estado actual del usuario (activo/inactivo).
     /// </summary>
-    public bool Estatus { get; set; }
+    public bool Estado { get; set; }
 }
 
 /// <summary>

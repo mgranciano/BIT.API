@@ -58,7 +58,16 @@ public class LoginController : ControllerBase
         var token = _jwtTokenService.GenerateToken(usuario.IdUsuario, usuario.CorreoElectronico);
         _logService.Correcto(nameof(UsuarioController), $"Inicio de sesión exitoso para : {loginDto.Email}");
 
-        var response = new LoginResponseDto { Token = token };
-        return Ok(ResponseDto<LoginResponseDto>.Exito("Inicio de sesión exitoso.", response));
+        if (!string.IsNullOrEmpty(token))
+        {
+            var listaModulos = await _usuarioService.ObtenerModulosPorUsuarioAsync(usuario.IdUsuario);
+            var response = new LoginResponseDto { Token = token, Modulos = listaModulos, Perfil = usuario };
+            return Ok(ResponseDto<LoginResponseDto>.Exito("Inicio de sesión exitoso.", response));
+        }
+        else
+        {
+            _logService.Error(nameof(UsuarioController), $"Error al generar el token para: {loginDto.Email}");
+            return StatusCode(500, ResponseDto<object>.Error("Error al generar el token."));
+        }
     }
 }
