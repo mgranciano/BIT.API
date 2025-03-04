@@ -71,6 +71,7 @@ public class UsuarioDto
 public class PaisDto
 {
     public string PaisId { get; set; }
+    public string Nombre { get; set; }
     public bool Estado { get; set; }
 }
 
@@ -79,6 +80,7 @@ public class PaisDto
 /// </summary>
 public class RolDto
 {
-    public string RolId { get; set; }
+    public Int16 RolId { get; set; }
+    public string Nombre { get; set; }
     public bool Estado { get; set; }
 }

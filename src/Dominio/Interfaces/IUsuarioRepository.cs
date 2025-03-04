@@ -1,4 +1,5 @@
 using Dominio.Entities;
+using Dominio.Entities.Dapper;
 
 namespace Dominio.Interfaces;
 
@@ -25,21 +26,21 @@ public interface IUsuarioRepository
     ///</summary>
     /// <param name="correo">Correo del usuario al que se desea buscar</param>
     /// <returns>Si el usuario existe, se retorna el usuario, de lo contrario, se retorna null </returns>
-    Task<DatosAccesoUsuario?> ObtenerUsuarioPorEmailAsync(string correo);
+    Task<AccesoUsuario?> ObtenerUsuarioPorEmailAsync(string correo);
 
     /// <summary>
     /// Registra un nuevo usuario en el sistema.
     /// </summary>
     /// <param name="usuario">Objeto que contiene los datos del usuario a registrar.</param>
     /// <returns>El usuario registrado con sus datos almacenados.</returns>
-    Task<Usuario> RegistrarUsuarioAsync(Usuario usuario);
+    Task<RespuestaDapper> RegistrarUsuarioAsync(Usuario usuario);
 
     /// <summary>
     /// Actualiza la información de un usuario existente.
     /// </summary>
     /// <param name="usuario">Objeto con los datos actualizados del usuario.</param>
     /// <returns>El usuario actualizado si la operación es exitosa; de lo contrario, `null`.</returns>
-    Task<Usuario?> ActualizarUsuarioAsync(Usuario usuario);
+    Task<RespuestaDapper> ActualizarUsuarioAsync(Usuario usuario);
 
     /// <summary>
     /// Realiza un borrado lógico de un usuario, marcándolo como inactivo.

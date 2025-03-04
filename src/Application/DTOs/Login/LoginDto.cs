@@ -1,5 +1,5 @@
 #nullable disable
-namespace Application.DTOs;
+namespace Application.DTOs.Login;
 
 /// <summary>
 /// Representa los datos de inicio de sesión del usuario.

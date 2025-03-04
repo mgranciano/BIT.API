@@ -1,15 +1,14 @@
-﻿
 #nullable disable
-namespace Dominio.Entities
+namespace Application.DTOs.Login
 {
-    /// <summary>
+  /// <summary>
     /// Representa la entidad de un usuario Valido del sistema.
     /// </summary>
     /// <remarks>
     /// Contiene la información general de un usuario, 
     /// datos personales, jerarquía organizacional, roles y países asignados.
     /// </remarks>
-    public class AccesoUsuario
+    public class DatosAccesoUsuarioDto
     {
         /// <summary>
         /// Identificador del usuario

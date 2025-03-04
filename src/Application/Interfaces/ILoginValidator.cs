@@ -1,6 +1,6 @@
 namespace Application.Interfaces;
 
-using Application.DTOs;
+using Application.DTOs.Login;
 using FluentValidation.Results;
 
 /// <summary>

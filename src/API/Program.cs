@@ -125,8 +125,6 @@ public static class Program
                 options.JsonSerializerOptions.WriteIndented = true;
             });
 
-        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
 
@@ -178,7 +176,8 @@ public static class Program
 
         if (usarSql)
         {
-            builder.Services.AddScoped<IUsuarioRepository>(sp => new UsuarioRepository(connectionString));
+            builder.Services.AddSingleton<DapperContext>();
+            builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
         }
         else
@@ -188,7 +187,7 @@ public static class Program
 
         builder.Services.AddScoped<IUsuarioService, UsuarioService>();
         builder.Services.AddScoped<JwtTokenService>();
-        builder.Services.AddScoped<ILogService, LogService>(); 
+        builder.Services.AddScoped<ILogService, LogService>();
         builder.Services.AddScoped<IUsuarioValidator, UsuarioValidatorService>();
         builder.Services.AddScoped<ILoginValidator, LoginValidatorService>();
 
@@ -209,7 +208,7 @@ public static class Program
             logService.EstablecerEndpoint(context.Request.Path);
             await next.Invoke();
         });
-        
+
         app.UseAuthentication();
         app.UseAuthorization();
 

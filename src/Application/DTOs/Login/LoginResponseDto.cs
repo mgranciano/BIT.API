@@ -1,7 +1,7 @@
 #nullable disable
 using Dominio.Entities;
 
-namespace Application.DTOs;
+namespace Application.DTOs.Login;
 
 /// <summary>
 /// Representa la respuesta de autenticación con JWT.
@@ -15,9 +15,9 @@ public class LoginResponseDto
     /// <summary>
     /// Modulos a los que tiene acceso el usuario.
     /// </summary>
-    public List<Modulo> Modulos { get; set; }
+    public List<ModuloDto> Modulos { get; set; }
     /// <summary>
     /// Perfil del usuario.
     /// </summary>
-    public DatosAccesoUsuario Perfil { get; set; }
+    public DatosAccesoUsuarioDto Perfil { get; set; }
 }

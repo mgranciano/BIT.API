@@ -14,16 +14,15 @@ public class Usuario
     /// Identificador único del usuario.
     /// </summary>
     public string IdUsuario { get; set; }
+    /// <summary>
+    /// Nombre completo del usuario.
+    /// </summary>
+    public string NombreCompleto { get; set; }
 
     /// <summary>
     /// Correo electrónico del usuario.
     /// </summary>
     public string CorreoElectronico { get; set; }
-
-    /// <summary>
-    /// Nombre completo del usuario.
-    /// </summary>
-    public string NombreCompleto { get; set; }
 
     /// <summary>
     /// Identificador del usuario superior (jefe o líder directo).
@@ -43,12 +42,13 @@ public class Usuario
     /// <summary>
     /// Lista de países asignados al usuario.
     /// </summary>
-    public List<Pais> Pais { get; set; }
+    public List<Pais> Paises { get; set; }
+
 
     /// <summary>
     /// Lista de roles asignados al usuario.
     /// </summary>
-    public List<Rol> Rol { get; set; }
+    public List<Rol> Roles { get; set; }
 
     /// <summary>
     /// Fecha en la que el usuario fue creado en el sistema.
@@ -74,8 +74,11 @@ public class Pais
     /// <summary>
     /// Identificador único del país.
     /// </summary>
-    public string PaisId { get; set; }
-
+    public string Codigo { get; set; }
+    /// <summary>
+    /// Nombre del país.
+    /// </summary>
+    public string Nombre { get; set; }
     /// <summary>
     /// Estado del país asignado al usuario (activo/inactivo).
     /// </summary>
@@ -90,8 +93,11 @@ public class Rol
     /// <summary>
     /// Identificador único del rol.
     /// </summary>
-    public string RolId { get; set; }
-
+    public Int16 Id { get; set; }
+    /// <summary>
+    /// Nombre del rol.
+    /// </summary>
+    public string Nombre { get; set; }
     /// <summary>
     /// Estado del rol asignado al usuario (activo/inactivo).
     /// </summary>

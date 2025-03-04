@@ -1,4 +1,5 @@
 using Dominio.Entities;
+using Dominio.Entities.Dapper;
 using Dominio.Interfaces;
 using System.Text.Json;
 
@@ -46,15 +47,15 @@ public class UsuarioRepositoryJSON : IUsuarioRepository
     /// Carga Perfil del  usuarios desde el archivo JSON.
     /// </summary>
     /// <returns>El  usuario almacenados en el archivo JSON.</returns>
-    private async Task<DatosAccesoUsuario> CargarAccesoUsuarioAsync()
+    private async Task<AccesoUsuario> CargarAccesoUsuarioAsync()
     {
         if (!File.Exists(_jsonFilePathDatosAccesoUsuario))
         {
-            return new DatosAccesoUsuario();
+            return new AccesoUsuario();
         }
 
         var json = await File.ReadAllTextAsync(_jsonFilePathDatosAccesoUsuario);
-        return JsonSerializer.Deserialize<DatosAccesoUsuario>(json) ?? new DatosAccesoUsuario();
+        return JsonSerializer.Deserialize<AccesoUsuario>(json) ?? new AccesoUsuario();
     }
 
     /// <summary>
@@ -92,15 +93,15 @@ public class UsuarioRepositoryJSON : IUsuarioRepository
     /// </summary>
     /// <param name="usuario">Objeto con los datos del usuario a registrar.</param>
     /// <returns>El usuario registrado con sus datos almacenados.</returns>
-    public async Task<Usuario> RegistrarUsuarioAsync(Usuario usuario)
+    public async Task<RespuestaDapper> RegistrarUsuarioAsync(Usuario usuario)
     {
-        var usuarios = await CargarUsuariosAsync();
-        usuario.FechaCreacion = DateTime.UtcNow;
-        usuario.FechaActualizacion = DateTime.UtcNow;
-        usuario.Estado = true;
-        usuarios.Add(usuario);
-        await GuardarUsuariosAsync(usuarios);
-        return usuario;
+        // var usuarios = await CargarUsuariosAsync();
+        // usuario.FechaCreacion = DateTime.UtcNow;
+        // usuario.FechaActualizacion = DateTime.UtcNow;
+        // usuario.Estado = true;
+        // usuarios.Add(usuario);
+        // await GuardarUsuariosAsync(usuarios);
+        return new RespuestaDapper();
     }
 
     /// <summary>
@@ -108,27 +109,27 @@ public class UsuarioRepositoryJSON : IUsuarioRepository
     /// </summary>
     /// <param name="usuario">Objeto con los datos actualizados del usuario.</param>
     /// <returns>El usuario actualizado si la operación es exitosa; de lo contrario, `null`.</returns>
-    public async Task<Usuario?> ActualizarUsuarioAsync(Usuario usuario)
+    public async Task<RespuestaDapper> ActualizarUsuarioAsync(Usuario usuario)
     {
-        var usuarios = await CargarUsuariosAsync();
-        var usuarioExistente = usuarios.FirstOrDefault(u => u.IdUsuario == usuario.IdUsuario);
+        // var usuarios = await CargarUsuariosAsync();
+        // var usuarioExistente = usuarios.FirstOrDefault(u => u.IdUsuario == usuario.IdUsuario);
 
-        if (usuarioExistente != null)
-        {
-            usuarioExistente.CorreoElectronico = usuario.CorreoElectronico;
-            usuarioExistente.NombreCompleto = usuario.NombreCompleto;
-            usuarioExistente.IdSuperior = usuario.IdSuperior;
-            usuarioExistente.NombreSuperior = usuario.NombreSuperior;
-            usuarioExistente.CorreoElectronicoSuperior = usuario.CorreoElectronicoSuperior;
-            usuarioExistente.Pais = usuario.Pais;
-            usuarioExistente.Rol = usuario.Rol;
-            usuarioExistente.FechaActualizacion = DateTime.UtcNow;
-            usuarioExistente.Estado = usuario.Estado;
+        // if (usuarioExistente != null)
+        // {
+        //     usuarioExistente.CorreoElectronico = usuario.CorreoElectronico;
+        //     usuarioExistente.NombreCompleto = usuario.NombreCompleto;
+        //     usuarioExistente.IdSuperior = usuario.IdSuperior;
+        //     usuarioExistente.NombreSuperior = usuario.NombreSuperior;
+        //     usuarioExistente.CorreoElectronicoSuperior = usuario.CorreoElectronicoSuperior;
+        //     usuarioExistente.Paises = usuario.Paises;
+        //     usuarioExistente.Roles = usuario.Roles;
+        //     usuarioExistente.FechaActualizacion = DateTime.UtcNow;
+        //     usuarioExistente.Estado = usuario.Estado;
 
-            await GuardarUsuariosAsync(usuarios);
-            return usuarioExistente;
-        }
-        return null;
+        //     await GuardarUsuariosAsync(usuarios);
+        //     return usuarioExistente;
+        // }
+        return new RespuestaDapper();
     }
 
     /// <summary>
@@ -157,7 +158,7 @@ public class UsuarioRepositoryJSON : IUsuarioRepository
     /// <param name="usuarioId">Correo del usuario a buscar.</param>
     /// <returns>El usuario correspondiente si existe; de lo contrario, `null`.</returns>
 
-    public async Task<DatosAccesoUsuario?> ObtenerUsuarioPorEmailAsync(string correo)
+    public async Task<AccesoUsuario?> ObtenerUsuarioPorEmailAsync(string correo)
     {
         return await CargarAccesoUsuarioAsync();
     }

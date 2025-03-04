@@ -1,6 +1,7 @@
 namespace Application.Interfaces;
 
 using Dominio.Entities;
+using Dominio.Entities.Dapper;
 
 /// <summary>
 /// Interfaz para el servicio de gestión de usuarios.
@@ -9,9 +10,9 @@ public interface IUsuarioService
 {
     Task<IEnumerable<Usuario>> ObtenerUsuariosAsync();
     Task<Usuario?> ObtenerUsuarioPorIdAsync(string usuarioId);
-    Task<DatosAccesoUsuario?> ObtenerUsuarioPorEmailAsync(string emial);
-    Task<Usuario> RegistrarUsuarioAsync(Usuario usuario);
-    Task<Usuario?> ActualizarUsuarioAsync(Usuario usuario);
+    Task<AccesoUsuario?> ObtenerUsuarioPorEmailAsync(string emial);
+    Task<RespuestaDapper> RegistrarUsuarioAsync(Usuario usuario);
+    Task<RespuestaDapper> ActualizarUsuarioAsync(Usuario usuario);
     Task<Usuario?> EliminarUsuarioAsync(string usuarioId);
-    Task<List<Modulo>> ObtenerModulosPorUsuarioAsync(string idUsuario);
+    Task<IEnumerable<ModuloGeneral>> ObtenerModulosPorUsuarioAsync(string idUsuario);
 }

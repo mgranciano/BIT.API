@@ -2,6 +2,7 @@ namespace Application.Services;
 
 using Application.Interfaces;
 using Dominio.Entities;
+using Dominio.Entities.Dapper;
 using Dominio.Interfaces;
 
 /// <summary>
@@ -45,7 +46,7 @@ public class UsuarioService : IUsuarioService
     /// </summary>
     /// <param name="usuario">Objeto que contiene la información del usuario a registrar.</param>
     /// <returns>El usuario registrado con sus datos almacenados.</returns>
-    public async Task<Usuario> RegistrarUsuarioAsync(Usuario usuario)
+    public async Task<RespuestaDapper> RegistrarUsuarioAsync(Usuario usuario)
     {
         return await _usuarioRepository.RegistrarUsuarioAsync(usuario);
     }
@@ -55,7 +56,7 @@ public class UsuarioService : IUsuarioService
     /// </summary>
     /// <param name="usuario">Objeto con los datos actualizados del usuario.</param>
     /// <returns>El usuario actualizado si la operación es exitosa; de lo contrario, `null`.</returns>
-    public async Task<Usuario?> ActualizarUsuarioAsync(Usuario usuario)
+    public async Task<RespuestaDapper> ActualizarUsuarioAsync(Usuario usuario)
     {
         return await _usuarioRepository.ActualizarUsuarioAsync(usuario);
     }
@@ -76,7 +77,7 @@ public class UsuarioService : IUsuarioService
     /// <param name="correo">Correo electronico del usuario</param>
     /// <returns>Retorna el usuario</returns> 
 
-    public async Task<DatosAccesoUsuario?> ObtenerUsuarioPorEmailAsync(string emial)
+    public async Task<AccesoUsuario?> ObtenerUsuarioPorEmailAsync(string emial)
     {
         return await _usuarioRepository.ObtenerUsuarioPorEmailAsync(emial);
     }
@@ -86,41 +87,8 @@ public class UsuarioService : IUsuarioService
     /// <param name="idUsuario">Identificador del usaurio con el que se hará la validación para el acceso a los modulos</param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public async Task<List<Modulo>> ObtenerModulosPorUsuarioAsync(string idUsuario)
+    public async Task<IEnumerable<ModuloGeneral>> ObtenerModulosPorUsuarioAsync(string idUsuario)
     {
-        IEnumerable<ModuloGeneral> modulos = await _usuarioRepository.ObtenerModulosPorUsuarioAsync(idUsuario);
-        List<Modulo> listaModulos = null;
-        if (modulos != null && modulos.Any())
-        {
-            listaModulos = new List<Modulo>();
-            List<ModuloGeneral> subModulos = modulos.Where(x => !string.IsNullOrEmpty(x.IdMenuCatalogo)).ToList();
-            foreach (var modulo in modulos)
-            {
-
-                if (string.IsNullOrEmpty(modulo.IdMenuCatalogo))
-                {
-                    Modulo mod = new Modulo();
-                    mod.Label = modulo.Menu;
-                    mod.Icono = modulo.Icono;
-                    mod.Ruta = modulo.Ruta;
-                    var subM = subModulos.Where(x => Convert.ToInt16(x.IdMenuCatalogo) == modulo.IdMenu).ToList();
-                    if (subM.Any())
-                    {
-                        List<Modulo> listaSubModulos = new List<Modulo>();
-                        foreach (var subModulo in subM)
-                        {
-                            Modulo subMod = new Modulo();
-                            subMod.Label = subModulo.Menu;
-                            subMod.Icono = subModulo.Icono;
-                            subMod.Ruta = subModulo.Ruta;
-                            listaSubModulos.Add(subMod);
-                        }
-                        mod.Submodulos = listaSubModulos;
-                    }
-                    listaModulos.Add(mod);
-                }
-            }
-        }
-        return listaModulos;
+        return await _usuarioRepository.ObtenerModulosPorUsuarioAsync(idUsuario);
     }
 }

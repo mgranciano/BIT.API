@@ -1,11 +1,14 @@
 namespace API.Controllers;
 
+using Application.DTOs.Login;
 using Application.DTOs;
 using Application.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Application.Extensions;
+using Dominio.Entities;
 
 /// <summary>
 /// Controlador para la autenticación de usuarios.
@@ -39,7 +42,7 @@ public class LoginController : ControllerBase
     public async Task<IActionResult> Authenticate([FromBody] LoginDto loginDto)
     {
         _logService.Informacion(nameof(UsuarioController), $"Intento de inicio de sesión para: {loginDto.Email}");
-
+        LoginResponseDto respDto = new LoginResponseDto();
         var validationResult = _loginValidator.Validar(loginDto);
         if (!validationResult.IsValid)
         {
@@ -49,25 +52,39 @@ public class LoginController : ControllerBase
         }
         var usuario = await _usuarioService.ObtenerUsuarioPorEmailAsync(loginDto.Email);
 
-        if (usuario == null || !usuario.Estado)
+        if (usuario != null && usuario.Estado)
+        {
+            respDto.Perfil = usuario.ToDatosAccesoUsuario();
+            respDto.Token = _jwtTokenService.GenerateToken(usuario.IdUsuario, usuario.CorreoElectronico);
+            _logService.Correcto(nameof(UsuarioController), $"Inicio de sesión exitoso para : {loginDto.Email}");
+
+            if (!string.IsNullOrEmpty(respDto.Token))
+            {
+                var Modulos = await _usuarioService.ObtenerModulosPorUsuarioAsync(usuario.IdUsuario);
+                if (Modulos != null && Modulos.Any())
+                {
+                    respDto.Modulos = Modulos.ToModuloGeneralDtoList();
+                    _logService.Correcto(nameof(UsuarioController), $"Modulos obtenidos correctamente para: {loginDto.Email}");
+                }
+                else
+                {
+                    _logService.Advertencia(nameof(UsuarioController), $"No se encontraron modulos para: {loginDto.Email}");
+                }
+
+                return Ok(ResponseDto<LoginResponseDto>.Exito("Inicio de sesión exitoso.", respDto));
+            }
+            else
+            {
+                _logService.Error(nameof(UsuarioController), $"Error al generar el token para: {loginDto.Email}");
+                return StatusCode(500, ResponseDto<object>.Error("Error al generar el token."));
+            }
+        }
+        else
         {
             _logService.Error(nameof(UsuarioController), $"Usuario no encontrado o inactivo: {loginDto.Email}");
             return Unauthorized(ResponseDto<object>.Error("Usuario no encontrado o inactivo."));
         }
 
-        var token = _jwtTokenService.GenerateToken(usuario.IdUsuario, usuario.CorreoElectronico);
-        _logService.Correcto(nameof(UsuarioController), $"Inicio de sesión exitoso para : {loginDto.Email}");
 
-        if (!string.IsNullOrEmpty(token))
-        {
-            var listaModulos = await _usuarioService.ObtenerModulosPorUsuarioAsync(usuario.IdUsuario);
-            var response = new LoginResponseDto { Token = token, Modulos = listaModulos, Perfil = usuario };
-            return Ok(ResponseDto<LoginResponseDto>.Exito("Inicio de sesión exitoso.", response));
-        }
-        else
-        {
-            _logService.Error(nameof(UsuarioController), $"Error al generar el token para: {loginDto.Email}");
-            return StatusCode(500, ResponseDto<object>.Error("Error al generar el token."));
-        }
     }
 }

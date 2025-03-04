@@ -100,11 +100,24 @@ public class UsuarioController : ControllerBase
         }
 
         _logService.Advertencia(nameof(UsuarioController), $"Se está registrando un nuevo usuario {usuario.Email}.");
-        var nuevoUsuario = await _usuarioService.RegistrarUsuarioAsync(usuario.ToEntity());
+        var resultado = await _usuarioService.RegistrarUsuarioAsync(usuario.ToEntity());
 
-        _logService.Correcto(nameof(UsuarioController), $"Usuario registrado correctamente: {nuevoUsuario.IdUsuario}.");
-        return CreatedAtAction(nameof(ObtenerUsuario), new { usuarioId = nuevoUsuario.IdUsuario },
-            ResponseDto<UsuarioDto>.Exito(ApiMensajesUsuarios.UsuarioCreado, nuevoUsuario.ToDto()));
+        if (resultado != null && resultado.Estatus == "S")
+        {
+            _logService.Correcto(nameof(UsuarioController), $"Usuario registrado correctamente: {usuario.UsuarioId}.");
+            return CreatedAtAction(nameof(ObtenerUsuario), new { usuarioId = usuario.UsuarioId },
+                ResponseDto<UsuarioDto>.Exito(ApiMensajesUsuarios.UsuarioCreado, usuario));
+        }
+        else if (resultado != null && resultado.Estatus == "W")
+        {
+            _logService.Advertencia(nameof(UsuarioController), $"Usuario ya existe: {usuario.UsuarioId}.");
+            return BadRequest(ResponseDto<object>.Advertencia(ApiMensajesUsuarios.UsuarioYaExiste));
+        }
+        else
+        {
+            _logService.Error(nameof(UsuarioController), $"Error al registrar el usuario: {usuario.UsuarioId}.");
+            return StatusCode(500, ResponseDto<object>.Error(ApiMensajesUsuarios.ErrorRegistro));
+        }
     }
 
     /// <summary>
@@ -125,16 +138,16 @@ public class UsuarioController : ControllerBase
         }
 
         _logService.Advertencia(nameof(UsuarioController), $"Se está actualizando el usuario con ID {usuarioId}.");
-        var usuarioActualizado = await _usuarioService.ActualizarUsuarioAsync(usuario.ToEntity());
+        var resultado = await _usuarioService.ActualizarUsuarioAsync(usuario.ToEntity());
 
-        if (usuarioActualizado == null)
+        if (resultado == null || resultado.Estatus == "E")
         {
             _logService.Advertencia(nameof(UsuarioController), $"No se encontró el usuario con ID {usuarioId}.");
             return NotFound(ResponseDto<object>.Advertencia(ApiMensajesUsuarios.UsuarioNoEncontrado));
         }
 
         // ✅ Convertir Usuario (Entities) a UsuarioDto (DTOs) antes de devolverlo
-        var usuarioActualizadoDto = usuarioActualizado.ToDto();
+        var usuarioActualizadoDto = usuario;
 
         _logService.Correcto(nameof(UsuarioController), $"Usuario actualizado correctamente: {usuarioId}.");
         return Ok(ResponseDto<UsuarioDto>.Exito(ApiMensajesUsuarios.UsuarioActualizado, usuarioActualizadoDto));

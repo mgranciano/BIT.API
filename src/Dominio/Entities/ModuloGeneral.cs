@@ -1,4 +1,4 @@
-
+#nullable disable
 namespace Dominio.Entities;
 
 public class ModuloGeneral
@@ -10,7 +10,7 @@ public class ModuloGeneral
     /// <summary>
     /// Identificador del Modulo al que está referencia el Submodulo.
     /// </summary>
-    public string? IdMenuCatalogo { get; set; }
+    public string IdMenuCatalogo { get; set; }
     /// <summary>
     /// Nombre del Menú.
     /// </summary>

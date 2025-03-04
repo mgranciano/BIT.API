@@ -1,8 +1,10 @@
-namespace Dominio.Entities;
+#nullable disable
+namespace Application.DTOs.Login;
 /// <summary>
 /// Representa un módulo en el sistema.
 /// </summary>
-public class Modulo
+
+public class ModuloDto
 {
     /// <summary>
     /// Nombre del módulo.
@@ -22,5 +24,6 @@ public class Modulo
     /// <summary>
     /// Lista de submódulos asociados a este módulo.
     /// </summary>
-    public List<Modulo>? Submodulos { get; set; }
+    public List<ModuloDto>? Submodulos { get; set; }
+
 }

@@ -15,4 +15,8 @@ public static class ApiMensajesUsuarios
     public const string RegistroNoEncontrado = "No se ha encontrado el registro.";
     public const string DatosInvalidos = "Datos inválidos. El usuario debe tener un email y un nombre.";
     public const string IdNoCoincide = "El ID del usuario no coincide con el de la URL.";
+    public const string UsuarioYaExiste = "El Usuario ya se encuentra registrado.";
+    public const string ErrorRegistro = "Error al registrar el usuario.";
+    public const string ErrorActualizacion = "Error al actualizar el usuario.";
+
 }

@@ -4,6 +4,8 @@ using Application.DTOs;
 using Dominio.Entities;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 /// <summary>
 /// Métodos de extensión para convertir entidades de Usuario a DTOs.
@@ -20,8 +22,8 @@ public static class UsuarioExtensions
             UsuarioSuperiorId = usuario.IdSuperior,
             NombreSuperior = usuario.NombreSuperior,
             EmailSuperior = usuario.CorreoElectronicoSuperior,
-            Paises = usuario.Pais?.ToPaisDtoList(),
-            Roles = usuario.Rol?.ToRolDtoList(),
+            Paises = usuario.Paises?.ToPaisDtoList(),
+            Roles = usuario.Roles?.ToRolDtoList(),
             FechaCreacion = usuario.FechaCreacion,
             FechaActualizacion = usuario.FechaActualizacion,
             Estatus = usuario.Estado
@@ -38,8 +40,8 @@ public static class UsuarioExtensions
             IdSuperior = usuarioDto.UsuarioSuperiorId,
             NombreSuperior = usuarioDto.NombreSuperior,
             CorreoElectronicoSuperior = usuarioDto.EmailSuperior,
-            Pais = usuarioDto.Paises?.ToPaisEntityList(),
-            Rol = usuarioDto.Roles?.ToRolEntityList(),
+            Paises = usuarioDto.Paises?.ToPaisEntityList(),
+            Roles = usuarioDto.Roles?.ToRolEntityList(),
             FechaCreacion = usuarioDto.FechaCreacion,
             FechaActualizacion = usuarioDto.FechaActualizacion,
             Estado = usuarioDto.Estatus
@@ -50,7 +52,7 @@ public static class UsuarioExtensions
     {
         return paises?.Select(p => new Pais
         {
-            PaisId = p.PaisId,
+            Codigo = p.PaisId,
             Estado = p.Estado
         }).ToList() ?? new List<Pais>();
     }
@@ -59,7 +61,7 @@ public static class UsuarioExtensions
     {
         return roles?.Select(r => new Rol
         {
-            RolId = r.RolId,
+            Id = r.RolId,
             Estado = r.Estado
         }).ToList() ?? new List<Rol>();
     }
@@ -69,21 +71,25 @@ public static class UsuarioExtensions
         return usuarios.Select(u => u.ToDto());
     }
 
-    public static List<PaisDto> ToPaisDtoList(this IEnumerable<Pais> paises)
+    public static List<PaisDto> ToPaisDtoList(this List<Pais> paises)
     {
         return paises.Select(p => new PaisDto
         {
-            PaisId = p.PaisId,
-            Estado = p.Estado
+            PaisId = p.Codigo,
+            Nombre = p.Nombre,
+            Estado = p.Estado,
+
         }).ToList();
     }
 
-    public static List<RolDto> ToRolDtoList(this IEnumerable<Rol> roles)
+    public static List<RolDto> ToRolDtoList(this List<Rol> roles)
     {
-        return roles.Select(r => new RolDto
+        return roles.Select(p => new RolDto
         {
-            RolId = r.RolId,
-            Estado = r.Estado
+            RolId = p.Id,
+            Nombre = p.Nombre,
+            Estado = p.Estado,
+
         }).ToList();
     }
 }

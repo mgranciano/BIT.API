@@ -1,6 +1,6 @@
 namespace Infrastructure.Services;
 
-using Application.DTOs;
+using Application.DTOs.Login;
 using Application.Interfaces;
 using FluentValidation;
 using FluentValidation.Results;
